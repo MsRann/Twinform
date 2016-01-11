@@ -1,0 +1,14 @@
+# These settings will apply to both controllable characters
+RightForceX=25.0
+RightForceY=0.0
+LeftForceX=-25.0
+LeftForceY=0.0
+
+# Both jump and down force will be relative to the character, so down force for the bottom guy will be underneath him(the way gravity affects him)
+JumpForceX=0.0
+JumpForceY=-350.0
+DownForceX=0.0
+DownForceY=100.0
+
+# Physical radius of the character
+Radius=12.5

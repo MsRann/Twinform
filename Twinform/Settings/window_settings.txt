@@ -1,0 +1,7 @@
+# Window Settings
+WindowTitle=Twinform
+WindowWidth=1280
+WindowHeight=720
+
+# This is a setting that controls how the window looks, I think valid values are 0-7
+WindowStyle=4

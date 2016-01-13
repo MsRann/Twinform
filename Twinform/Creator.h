@@ -10,7 +10,7 @@ namespace Creator
 {
 	void MakeStaticGeometry(const sf::Vector2f& position, const sf::Vector2f& size);
 	void MakeStaticGeometry(const sf::Vector2i& position, const sf::Vector2f& size);
-	void MakeStaticGeometryFromHalfTile(const sf::Vector2i& position, const sf::Vector2f& size);
+	void MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf::Vector2f& size);
 	void MakeControllableCharacter(const sf::Vector2f& start, const sf::Vector2f& size, ControllableControls controls, const sf::Vector2f& gravity);
 
 	ControllableCharacter* GetControllableCharacter(const uint32_t& id);

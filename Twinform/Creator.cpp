@@ -66,7 +66,7 @@ void Creator::MakeStaticGeometry(const sf::Vector2f& position, const sf::Vector2
 	++mUniqueId;
 }
 
-void Creator::MakeStaticGeometryFromHalfTile(const sf::Vector2i& position, const sf::Vector2f& size)
+void Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf::Vector2f& size)
 {
 	if (mUniqueId == 0)
 	{
@@ -75,8 +75,8 @@ void Creator::MakeStaticGeometryFromHalfTile(const sf::Vector2i& position, const
 	}
 
 	sf::Vector2f pos;
-	pos.x = static_cast<REAL>(position.x) * GRID_WIDTH_HALF;
-	pos.y = static_cast<REAL>(position.y) * GRID_HEIGHT_HALF;
+	pos.x = static_cast<REAL>(position.x) * size.x;
+	pos.y = static_cast<REAL>(position.y) * size.y;
 	mStaticGeometry[mUniqueId] = StaticGeometry(pos, size, mUniqueId);
 	Renderer::Add(mUniqueId, mStaticGeometry[mUniqueId].GetDrawable());
 	Simulator::Add(mStaticGeometry[mUniqueId]);
@@ -150,6 +150,7 @@ void Creator::Save(const std::string& filename)
 		geom.SetObject();
 		geom.AddMember("x", tile.x, allocator);
 		geom.AddMember("y", tile.y, allocator);
+
 		geomArr.PushBack(geom, allocator);
 	}
 
@@ -178,7 +179,7 @@ void Creator::Load(const std::string& filename)
 	{
 		const rapidjson::Value& v = geom[i];
 		sf::Vector2i coord = sf::Vector2i(v["x"].GetInt(), v["y"].GetInt());
-		MakeStaticGeometryFromHalfTile(coord, sf::Vector2f(25.0f, 25.0f));
+		MakeStaticGeometryFromSize(coord, sf::Vector2f(25.0f, 25.0f));
 	}
 }
 

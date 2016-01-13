@@ -132,6 +132,7 @@
     <ClCompile Include="CommandStream.cpp" />
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="HashedCellStorage.cpp" />
+    <ClCompile Include="OSUtils.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PropertyReader.cpp" />
     <ClCompile Include="Simulatable.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="CommandStream.h" />
     <ClInclude Include="Creator.h" />
     <ClInclude Include="HashedCellStorage.h" />
+    <ClInclude Include="OSUtils.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PropertyReader.h" />
     <ClInclude Include="RingBuffer.h" />

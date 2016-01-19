@@ -140,13 +140,13 @@ bool HashedCellStorage::IsColliding(Simulatable& simulatable, std::vector<std::p
 				// Intersection is the square of the intersection with the simulatable
 				sf::FloatRect intersection;
 				if (simulatable.GetCollisionBounds().intersects(sim->GetCollisionBounds(), intersection))
-				{
 					simulatablesHit.push_back(std::pair<Simulatable*, sf::FloatRect>(sim, intersection));
-					return true;
-				}
 			}
 		}
 	}
+
+	if (simulatablesHit.size() > 0)
+		return true;
 
 	return false;
 }
@@ -200,7 +200,7 @@ bool HashedCellStorage::IsPointColliding(sf::Vector2i point, Simulatable*& simul
 
 sf::Vector2i HashedCellStorage::CreateKey(const Simulatable& sim) const
 {
-	sf::Vector2f pos = sim.GetPosition();
+	sf::Vector2f pos = sim.GetParticleConst().GetPosition();
 	return CreateKey(pos);
 }
 

@@ -16,6 +16,8 @@ StaticGeometry::StaticGeometry(sf::Vector2f startPosition, sf::Vector2f size, ui
 
 	mDrawable.setPosition(startPosition);
 	mDrawable.setSize(size);
+
+	Renderer::DebugAddCollision(mCollisionBounds);
 }
 
 

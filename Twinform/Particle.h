@@ -52,10 +52,10 @@ public:
 	void AddForce(const sf::Vector2f& force);
 	void ZeroMovement();
 
-private:
 	sf::Vector2f mPosition;
 	sf::Vector2f mVelocity;
 	sf::Vector2f mAcceleration;
+private:
 	sf::Vector2f mForceAccumulator;
 	
 	REAL mInverseMass;

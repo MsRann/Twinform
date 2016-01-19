@@ -10,56 +10,77 @@
 
 namespace
 {
-	std::unordered_map<uint32_t, sf::Drawable*> mDrawables;
-	std::list<sf::Drawable*> mParticles;
+	std::unordered_map<uint32_t, sf::Drawable*> sUniqueDrawables;
+	std::list<sf::Drawable*> sParticles;
+	// Only for debug so instantiate to null and build if one is added
+	std::list<sf::FloatRect*> sCollisionData;
+	sf::RectangleShape sDbgRectangle;
 	// Members for measuring time passed in frames
-	sf::Clock mClock;
-	REAL mFrameTimeSec;
+	sf::Clock sClock;
+	REAL sFrameTimeSec;
 }
 
 void Renderer::Add(uint32_t id, sf::Drawable& drawable)
 {
-	mDrawables[id] = &drawable;
+	sUniqueDrawables[id] = &drawable;
 }
 
 void Renderer::AddParticle(sf::Drawable& drawable)
 {
-	mParticles.push_back(&drawable);
+	sParticles.push_back(&drawable);
 }
 
 void Renderer::Remove(uint32_t id)
 {
-	mDrawables.erase(id);
+	sUniqueDrawables.erase(id);
 }
 
 void Renderer::RemoveParticle(sf::Drawable& drawable)
 {
-	mParticles.remove(&drawable);
+	sParticles.remove(&drawable);
 }
 
 REAL Renderer::GetLastFrametime()
 {
-	return mFrameTimeSec;
+	return sFrameTimeSec;
 }
 
 void Renderer::Render(sf::RenderWindow& window)
 {
-	sf::Time elapsed = mClock.restart();
-	mFrameTimeSec = elapsed.asSeconds();
+	sf::Time elapsed = sClock.restart();
+	sFrameTimeSec = elapsed.asSeconds();
 
 	window.clear();
 
-	for (auto particle : mParticles)
+	for (auto particle : sParticles)
 	{
 		if (particle != nullptr)
 			window.draw(*particle);
 	}
 
-	for (auto drawable : mDrawables)
+	for (auto drawable : sUniqueDrawables)
 	{
 		if (drawable.second != nullptr)
 			window.draw(*drawable.second);
 	}
 
+	if (sCollisionData.size() > 0)
+	{
+		for (auto rect : sCollisionData)
+		{
+			sDbgRectangle.setSize(sf::Vector2f(rect->width, rect->height));
+			sDbgRectangle.setOutlineColor(sf::Color::Red);
+			sDbgRectangle.setFillColor(sf::Color(0, 0, 0, 0));
+			sDbgRectangle.setOutlineThickness(1.0f);
+			sDbgRectangle.setPosition(sf::Vector2f(rect->left, rect->top));
+			window.draw(sDbgRectangle);
+		}
+	}
+
 	window.display();
+}
+
+void Renderer::DebugAddCollision(sf::FloatRect& rect)
+{
+	sCollisionData.push_back(&rect);
 }

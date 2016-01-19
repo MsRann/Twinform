@@ -24,6 +24,11 @@ REAL twinmath::LengthSquared(const sf::Vector2f& v)
 	return pow((v.x * v.x + v.y * v.y), 2);
 }
 
+sf::Vector2f twinmath::Lerp(const sf::Vector2f& v1, const sf::Vector2f& v2, REAL t)
+{
+	return (1.0f - t) * v1 + (t * v2);
+}
+
 sf::Vector2i twinmath::CreateGrid(const sf::Vector2f& v, unsigned int width, unsigned int height)
 {
 	return sf::Vector2i((int)(v.x / width), (int)(v.y / height));

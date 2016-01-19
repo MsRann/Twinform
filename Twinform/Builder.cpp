@@ -14,26 +14,26 @@
 
 namespace
 {
-	sf::RectangleShape mCurrentDrawable;
-	Camera* mCamera = nullptr;
-	bool mCharactersSpawned = false;
-	ActionTimeAccumulator mDeleteAccumulator(5.0f);
+	sf::RectangleShape sCurrentDrawable;
+	Camera* sCamera = nullptr;
+	bool sCharactersSpawned = false;
+	ActionTimeAccumulator sDeleteAccumulator(5.0f);
 
 	void ProcessMouseInputs();
 	void ProcessKeyboardInputs();
 
 	void ProcessMouseInputs()
 	{
-		if (!mCamera->GetWindow().hasFocus())
+		if (!sCamera->GetWindow().hasFocus())
 			return;
 
-		sf::Vector2i mousePosition = sf::Mouse::getPosition(mCamera->GetWindow());
-		mousePosition.x += (int)(mCamera->GetView().getCenter().x 
-			- ((REAL)mCamera->GetWindowWidth() / 2.0f));
-		mousePosition.y += (int)(mCamera->GetView().getCenter().y 
-			- ((REAL)mCamera->GetWindowHeight() / 2.0f));
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(sCamera->GetWindow());
+		mousePosition.x += (int)(sCamera->GetView().getCenter().x 
+			- ((REAL)sCamera->GetWindowWidth() / 2.0f));
+		mousePosition.y += (int)(sCamera->GetView().getCenter().y 
+			- ((REAL)sCamera->GetWindowHeight() / 2.0f));
 		twinmath::SnapToGrid(mousePosition, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
-		mCurrentDrawable.setPosition((REAL)mousePosition.x, (REAL)mousePosition.y);
+		sCurrentDrawable.setPosition((REAL)mousePosition.x, (REAL)mousePosition.y);
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
@@ -45,11 +45,11 @@ namespace
 				);
 		}
 		else if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && 
-				mDeleteAccumulator.IsReady())
+				sDeleteAccumulator.IsReady())
 		{
 			uint32_t id = Simulator::GetId(mousePosition);
 			Creator::Delete(id);
-			mDeleteAccumulator.Reset();
+			sDeleteAccumulator.Reset();
 		}
 	}
 
@@ -58,26 +58,25 @@ namespace
 		sf::Vector2f offset;
 
 		// Process screen offset based on WASD
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			offset += sf::Vector2f(0.05f, 0.0f);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			offset += sf::Vector2f(-0.05f, 0.0f);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			offset += sf::Vector2f(0.0f, -0.05f);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			offset += sf::Vector2f(0.0f, 0.05f);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && !mCharactersSpawned)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && !sCharactersSpawned)
 		{
 			Creator::MakeControllableCharacter(sf::Vector2f(0, 300), sf::Vector2f(25.0f, 25.0f), CONTROLS_WASD, sf::Vector2f(0.0f, 10.0f));
-			//Creator::MakeControllableCharacter(sf::Vector2f(0, 400), sf::Vector2f(25.0f, 25.0f), CONTROLS_ARROWS, sf::Vector2f(0.0, -10.0f));
-			mCharactersSpawned = true;
+			sCharactersSpawned = true;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && mCharactersSpawned)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && sCharactersSpawned)
 		{
 			std::vector<ControllableCharacter*> characters;
 			if (Creator::GetControllableCharacters(characters))
@@ -92,26 +91,31 @@ namespace
 			}
 		}
 
-		mCamera->Translate(offset);
+		sCamera->Translate(offset);
 	}
 }
 
 void Builder::Initialize(Camera& twinformWindow)
 {
-	mCamera = &twinformWindow;
-	mCurrentDrawable.setPosition(0.0f, 0.0f);
-	mCurrentDrawable.setSize(sf::Vector2f(GRID_WIDTH / 2, GRID_HEIGHT / 2));
-	mCurrentDrawable.setFillColor(sf::Color(0u, 0u, 0u, 0u));
-	mCurrentDrawable.setOutlineThickness(2.0f);
-	mCurrentDrawable.setOutlineColor(sf::Color(0u, 0u, 255u, 255u));
-	Renderer::Add(0, mCurrentDrawable);
+	sCamera = &twinformWindow;
+	sCurrentDrawable.setPosition(0.0f, 0.0f);
+	sCurrentDrawable.setSize(sf::Vector2f(GRID_WIDTH / 2, GRID_HEIGHT / 2));
+	sCurrentDrawable.setFillColor(sf::Color(0u, 0u, 0u, 0u));
+	sCurrentDrawable.setOutlineThickness(2.0f);
+	sCurrentDrawable.setOutlineColor(sf::Color(0u, 0u, 255u, 255u));
+	Renderer::Add(0, sCurrentDrawable);
 }
 
 void Builder::Update(REAL delta)
 {
-	mDeleteAccumulator.Add(delta);
+	sDeleteAccumulator.Add(delta);
 	ProcessMouseInputs();
 	ProcessKeyboardInputs();
+}
+
+void Builder::SetCharacterSpawned(bool value)
+{
+	sCharactersSpawned = value;
 }
 
 #endif

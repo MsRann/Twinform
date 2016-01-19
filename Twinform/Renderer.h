@@ -13,6 +13,8 @@ namespace Renderer
 	void RemoveParticle(sf::Drawable& drawable);
 	void Render(sf::RenderWindow& window);
 
+	void DebugAddCollision(sf::FloatRect& rect);
+
 	// Returns time(in milliseconds) of previous frame time
 	REAL GetLastFrametime();
 }

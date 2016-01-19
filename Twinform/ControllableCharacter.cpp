@@ -69,6 +69,8 @@ void ControllableCharacter::PreUpdate(REAL delta)
 	UpdateCollisionBounds();
 	//ExecuteActionRight();
 
+	//std::cout << mCollisionBounds.top << std::endl;
+
 	if (mParticleSpawnAccumulator.IsReady())
 	{
 		sf::Vector2f dir = mParticle.GetVelocity();

@@ -56,6 +56,14 @@ const sf::FloatRect& Simulatable::GetCollisionBounds() const
 	return mCollisionBounds;
 }
 
+sf::FloatRect Simulatable::EstimateCollisionBounds(const sf::Vector2f& position) const
+{
+	sf::FloatRect bounds = mCollisionBounds;
+	bounds.top = position.y;
+	bounds.left = position.x;
+	return bounds;
+}
+
 sf::Vector2i Simulatable::GetPrevKey() const
 {
 	return mPrevKey;
@@ -64,21 +72,6 @@ sf::Vector2i Simulatable::GetPrevKey() const
 void Simulatable::SetParticle(const Particle& particle)
 {
 	mParticle = particle;
-}
-
-const sf::Vector2f& Simulatable::GetPosition() const
-{
-	return mParticle.GetPosition();
-}
-
-const sf::Vector2f& Simulatable::GetVelocity() const
-{
-	return mParticle.GetVelocity();
-}
-
-const sf::Vector2f& Simulatable::GetAcceleration() const
-{
-	return mParticle.GetAcceleration();
 }
 
 const sf::Vector2f& Simulatable::GetGravity() const
@@ -102,6 +95,11 @@ Particle& Simulatable::GetParticle()
 }
 
 Particle Simulatable::GetParticleCopy()
+{
+	return mParticle;
+}
+
+const Particle& Simulatable::GetParticleConst() const
 {
 	return mParticle;
 }

@@ -31,10 +31,7 @@ public:
 	void SetParticle(const Particle& particle);
 
 	const sf::FloatRect& GetCollisionBounds() const;
-
-	const sf::Vector2f& GetPosition() const;
-	const sf::Vector2f& GetVelocity() const;
-	const sf::Vector2f& GetAcceleration() const;
+	sf::FloatRect EstimateCollisionBounds(const sf::Vector2f& position) const;
 	const sf::Vector2f& GetGravity() const;
 
 	void SetFlag(PhysicalFlags flag);
@@ -42,20 +39,21 @@ public:
 
 	Particle& GetParticle();
 	Particle GetParticleCopy();
+	const Particle& GetParticleConst() const;
 
 	unsigned int GetFlags() const;
 	REAL GetMass() const;
 
 	RingBuffer<Particle>& GetPast();
 	uint32_t GetID();
+
+	sf::FloatRect mCollisionBounds;
 protected:
 	Particle mParticle;
 	sf::Vector2f mGravity;
 	sf::Vector2i mPrevKey;
 
 	uint32_t mFlags;
-
-	sf::FloatRect mCollisionBounds;
 
 	RingBuffer<Particle> mPast;
 	uint32_t mID;

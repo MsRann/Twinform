@@ -152,6 +152,7 @@
     <ClInclude Include="Commands.h" />
     <ClInclude Include="CommandStream.h" />
     <ClInclude Include="Creator.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="HashedCellStorage.h" />
     <ClInclude Include="OSUtils.h" />
     <ClInclude Include="ParticleSystem.h" />

@@ -71,9 +71,6 @@ int main()
 #endif
 
 	std::vector<ControllableCharacter*> characters;
-
-	//Creator::Save("test");
-
 	while (window.isOpen())
 	{
 		REAL time = Renderer::GetLastFrametime();
@@ -100,6 +97,7 @@ int main()
 			t += MAX_DT;
 		}
 
+		// For some reason the camera moves to player here, seems like a terrible spot for this code
 		if (Creator::GetControllableCharacters(characters))
 		{
 			// Average the y's and x's and center the camera to that

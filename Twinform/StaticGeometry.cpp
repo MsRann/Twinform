@@ -5,7 +5,6 @@
 StaticGeometry::StaticGeometry() :
 	Simulatable(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f))
 {
-	// This should never get called but since there is an unordered_map filled with StaticGeometry it needs to be defined, I think
 }
 
 StaticGeometry::StaticGeometry(sf::Vector2f startPosition, sf::Vector2f size, uint32_t id) :
@@ -16,8 +15,6 @@ StaticGeometry::StaticGeometry(sf::Vector2f startPosition, sf::Vector2f size, ui
 
 	mDrawable.setPosition(startPosition);
 	mDrawable.setSize(size);
-
-	Renderer::DebugAddCollision(mCollisionBounds);
 }
 
 

@@ -12,7 +12,7 @@ namespace
 {
 	std::unordered_map<uint32_t, sf::Drawable*> sUniqueDrawables;
 	std::list<sf::Drawable*> sParticles;
-	// Only for debug so instantiate to null and build if one is added
+	// Only for debug
 	std::list<sf::FloatRect*> sCollisionData;
 	sf::RectangleShape sDbgRectangle;
 	// Members for measuring time passed in frames

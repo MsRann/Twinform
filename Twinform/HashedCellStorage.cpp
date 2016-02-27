@@ -206,10 +206,10 @@ sf::Vector2i HashedCellStorage::CreateKey(const Simulatable& sim) const
 
 sf::Vector2i HashedCellStorage::CreateKey(const sf::Vector2f& pos) const
 {
-	return sf::Vector2i((int)floor(pos.x / GRID_WIDTH), (int)floor(pos.y / GRID_HEIGHT));
+	return sf::Vector2i((int)floor(pos.x / GRID_WIDTH_HALF), (int)floor(pos.y / GRID_HEIGHT_HALF));
 }
 
 sf::Vector2i HashedCellStorage::CreateKey(const sf::Vector2i& pos) const
 {
-	return sf::Vector2i(pos.x / GRID_WIDTH, pos.y / GRID_HEIGHT);
+	return sf::Vector2i(pos.x / GRID_WIDTH_HALF, pos.y / GRID_HEIGHT_HALF);
 }

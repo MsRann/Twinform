@@ -17,7 +17,7 @@ namespace
 	sf::RectangleShape sCurrentDrawable;
 	Camera* sCamera = nullptr;
 	bool sCharactersSpawned = false;
-	ActionTimeAccumulator sDeleteAccumulator(5.0f);
+	ActionTimeAccumulator sDeleteAccumulator(1.0f);
 
 	void ProcessMouseInputs();
 	void ProcessKeyboardInputs();
@@ -39,10 +39,12 @@ namespace
 		{
 			HashedCellStorage& staticStorage = Simulator::GetStaticStorage();
 			if (!staticStorage.IsPointColliding(mousePosition))
-				Creator::MakeStaticGeometry(mousePosition, 
-					sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF), 
+			{
+				Creator::MakeStaticGeometry(mousePosition,
+					sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF),
 					static_cast<REAL>(GRID_HEIGHT_HALF))
 				);
+			}
 		}
 		else if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && 
 				sDeleteAccumulator.IsReady())

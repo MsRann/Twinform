@@ -5,8 +5,8 @@
 
 void OSGetFilesInDir(const std::string& dirName, std::vector<std::string>& files)
 {
-	DIR *dir;
-	struct dirent *ent;
+	DIR* dir;
+	struct dirent* ent;
 	if ((dir = opendir(dirName.c_str())) != NULL) 
 	{
 		// print all the files and directories within directory
@@ -25,13 +25,13 @@ void OSGetFilesInDir(const std::string& dirName, std::vector<std::string>& files
 
 void OSDeleteFile(const std::string& dirName, const std::string& file)
 {
-	DIR *dir = opendir(dirName.c_str());
+	DIR* dir = opendir(dirName.c_str());
 	if (!dir)
 	{
 		perror("Could not open directory");
 		return;
 	}
-	struct dirent *ent;
+	struct dirent* ent;
 	while ((ent = readdir(dir)) != NULL)
 	{
 		if (file == ent->d_name)

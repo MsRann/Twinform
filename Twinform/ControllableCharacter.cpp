@@ -71,7 +71,7 @@ void ControllableCharacter::PreUpdate(REAL delta)
 
 	//std::cout << mCollisionBounds.top << std::endl;
 
-	if (mParticleSpawnAccumulator.IsReady())
+	/*if (mParticleSpawnAccumulator.IsReady())
 	{
 		sf::Vector2f dir = mParticle.GetVelocity();
 		if (twinmath::LengthSquared(dir) > FLOAT_SMALL * FLOAT_SMALL)
@@ -79,7 +79,7 @@ void ControllableCharacter::PreUpdate(REAL delta)
 		sf::Vector2f middle = mParticle.GetPosition() + sf::Vector2f(mRadius, mRadius);
 		ParticleSystem::Create(middle);
 		mParticleSpawnAccumulator.Reset();
-	}
+	}*/
 }
 
 void ControllableCharacter::UpdateAccumulators(REAL delta)

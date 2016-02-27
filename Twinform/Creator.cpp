@@ -157,7 +157,6 @@ void Creator::Save(const std::string& filename)
 		geom.SetObject();
 		geom.AddMember("x", tile.x, allocator);
 		geom.AddMember("y", tile.y, allocator);
-
 		geomArr.PushBack(geom, allocator);
 	}
 

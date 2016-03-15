@@ -11,7 +11,6 @@ namespace
 
 void CommandStream::Add(Command* command)
 {
-
 	std::lock_guard<std::mutex> guard(mMutex);
 	mCommandQueue.push(command);
 }

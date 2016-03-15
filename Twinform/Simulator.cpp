@@ -106,7 +106,7 @@ HashedCellStorage& Simulator::GetStaticStorage()
 { 
 	return sStaticStorage; 
 }
-//#include "Renderer.h"
+
 void Simulator::Add(Simulatable& character)
 {
 	// Insert character into either dynamic or static storage based on its falgs
@@ -120,14 +120,22 @@ void Simulator::Add(Simulatable& character)
 		{
 			float width = collisionRect.width;
 			while ((width -= GRID_WIDTH) > 0)
-				sStaticStorage.InsertToKey(character, sf::Vector2i((int)floor((collisionRect.left + width) / GRID_WIDTH), (int)floor(collisionRect.top / GRID_HEIGHT)));
+			{
+				sStaticStorage.InsertToKey(character
+					, sf::Vector2i((int)floor((collisionRect.left + width) / GRID_WIDTH)
+					, (int)floor(collisionRect.top / GRID_HEIGHT)));
+			}
 		}
 
 		if (collisionRect.height > GRID_HEIGHT)
 		{
 			float height = collisionRect.height;
 			while ((height -= GRID_HEIGHT) > 0)
-				sStaticStorage.InsertToKey(character, sf::Vector2i((int)floor(collisionRect.left / GRID_WIDTH), (int)floor((collisionRect.top + height) / GRID_HEIGHT)));
+			{
+				sStaticStorage.InsertToKey(character
+					, sf::Vector2i((int)floor(collisionRect.left / GRID_WIDTH)
+					, (int)floor((collisionRect.top + height) / GRID_HEIGHT)));
+			}
 		}
 
 		sStaticStorage.Insert(character);
@@ -137,7 +145,6 @@ void Simulator::Add(Simulatable& character)
 		// TODO: When dynamic storage becomes bigger than grid bounds update this to consider that
 		sDynamicStorage.Insert(character);
 	}
-	//Renderer::DebugAddCollision(character.mCollisionBounds);
 	sCharacters.push_back(&character);
 }
 

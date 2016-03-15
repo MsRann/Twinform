@@ -64,17 +64,14 @@ void Renderer::Render(sf::RenderWindow& window)
 			window.draw(*drawable.second);
 	}
 
-	if (sCollisionData.size() > 0)
+	for (auto rect : sCollisionData)
 	{
-		for (auto rect : sCollisionData)
-		{
-			sDbgRectangle.setSize(sf::Vector2f(rect->width, rect->height));
-			sDbgRectangle.setOutlineColor(sf::Color::Red);
-			sDbgRectangle.setFillColor(sf::Color(0, 0, 0, 0));
-			sDbgRectangle.setOutlineThickness(1.0f);
-			sDbgRectangle.setPosition(sf::Vector2f(rect->left, rect->top));
-			window.draw(sDbgRectangle);
-		}
+		sDbgRectangle.setSize(sf::Vector2f(rect->width, rect->height));
+		sDbgRectangle.setOutlineColor(sf::Color::Red);
+		sDbgRectangle.setFillColor(sf::Color(0, 0, 0, 0));
+		sDbgRectangle.setOutlineThickness(1.0f);
+		sDbgRectangle.setPosition(sf::Vector2f(rect->left, rect->top));
+		window.draw(sDbgRectangle);
 	}
 
 	window.display();

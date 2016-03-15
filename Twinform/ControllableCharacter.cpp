@@ -11,22 +11,22 @@
 
 namespace
 {
-	static PropertyReader mCharacterSettings("Settings/character_settings.txt");
+	static PropertyReader sCharacterSettings("Settings/character_settings.txt");
 
-	static bool mSettingsLoaded = false;
-	static REAL mRightForceX;
-	static REAL mRightForceY;
+	static bool sSettingsLoaded = false;
+	static REAL sRightForceX;
+	static REAL sRightForceY;
 
-	static REAL mLeftForceX;
-	static REAL mLeftForceY;
+	static REAL sLeftForceX;
+	static REAL sLeftForceY;
 
-	static REAL mJumpForceX;
-	static REAL mJumpForceY;
+	static REAL sJumpForceX;
+	static REAL sJumpForceY;
 
-	static REAL mDownForceX;
-	static REAL mDownForceY;
+	static REAL sDownForceX;
+	static REAL sDownForceY;
 
-	static REAL mRadius;
+	static REAL sRadius;
 }
 
 ControllableCharacter::ControllableCharacter() :
@@ -49,7 +49,7 @@ ControllableCharacter::ControllableCharacter(sf::Vector2f start, sf::Vector2f si
 	LoadSettings();
 	mID = id;
 	mDrawable.setPosition(start);
-	mDrawable.setRadius(mRadius);
+	mDrawable.setRadius(sRadius);
 }
 
 ControllableCharacter::~ControllableCharacter()
@@ -76,7 +76,7 @@ void ControllableCharacter::PreUpdate(REAL delta)
 		sf::Vector2f dir = mParticle.GetVelocity();
 		if (twinmath::LengthSquared(dir) > FLOAT_SMALL * FLOAT_SMALL)
 			twinmath::Normalize(dir);
-		sf::Vector2f middle = mParticle.GetPosition() + sf::Vector2f(mRadius, mRadius);
+		sf::Vector2f middle = mParticle.GetPosition() + sf::Vector2f(sRadius, sRadius);
 		ParticleSystem::Create(middle);
 		mParticleSpawnAccumulator.Reset();
 	}*/
@@ -102,7 +102,7 @@ void ControllableCharacter::ExecuteActionDown()
 	if (!mDownActionAccumulator.IsReady())
 		return;
 
-	mParticle.AddForce(sf::Vector2f(mDownForceX, mDownForceY));
+	mParticle.AddForce(sf::Vector2f(sDownForceX, sDownForceY));
 	mDownActionAccumulator.Reset();
 }
 
@@ -111,11 +111,11 @@ void ControllableCharacter::ExecuteActionUp()
 	if (!mUpActionAccumulator.IsReady())
 		return;
 
-	float jumpForce = mJumpForceY;
+	float jumpForce = sJumpForceY;
 	if (mGravity.y < 0.0f)
 		jumpForce *= -1;
 
-	mParticle.AddForce(sf::Vector2f(mJumpForceX, jumpForce));
+	mParticle.AddForce(sf::Vector2f(sJumpForceX, jumpForce));
 	mUpActionAccumulator.Reset();
 }
 
@@ -124,7 +124,7 @@ void ControllableCharacter::ExecuteActionRight()
 	if (!mRightActionAccumulator.IsReady())
 		return;
 
-	mParticle.AddVelocity(mRightForceX, mRightForceY);
+	mParticle.AddVelocity(sRightForceX, sRightForceY);
 	mRightActionAccumulator.Reset();
 }
 
@@ -133,7 +133,7 @@ void ControllableCharacter::ExecuteActionLeft()
 	if (!mLeftActionAccumulator.IsReady())
 		return;
 
-	mParticle.AddVelocity(mLeftForceX, mLeftForceY);
+	mParticle.AddVelocity(sLeftForceX, sLeftForceY);
 	mLeftActionAccumulator.Reset();
 }
 
@@ -189,17 +189,17 @@ void ControllableCharacter::ApplyInputs()
 
 void ControllableCharacter::LoadSettings()
 {
-	if (mSettingsLoaded)
+	if (sSettingsLoaded)
 		return;
 
-	mCharacterSettings.ReadFloat("RightForceX", mRightForceX);
-	mCharacterSettings.ReadFloat("RightForceY", mRightForceY);
-	mCharacterSettings.ReadFloat("LeftForceX", mLeftForceX);
-	mCharacterSettings.ReadFloat("LeftForceY", mLeftForceY);
-	mCharacterSettings.ReadFloat("JumpForceX", mJumpForceX);
-	mCharacterSettings.ReadFloat("JumpForceY", mJumpForceY);
-	mCharacterSettings.ReadFloat("DownForceX", mDownForceX);
-	mCharacterSettings.ReadFloat("DownForceY", mDownForceY);
-	mCharacterSettings.ReadFloat("Radius", mRadius);
-	mSettingsLoaded = true;
+	sCharacterSettings.ReadFloat("RightForceX", sRightForceX);
+	sCharacterSettings.ReadFloat("RightForceY", sRightForceY);
+	sCharacterSettings.ReadFloat("LeftForceX", sLeftForceX);
+	sCharacterSettings.ReadFloat("LeftForceY", sLeftForceY);
+	sCharacterSettings.ReadFloat("JumpForceX", sJumpForceX);
+	sCharacterSettings.ReadFloat("JumpForceY", sJumpForceY);
+	sCharacterSettings.ReadFloat("DownForceX", sDownForceX);
+	sCharacterSettings.ReadFloat("DownForceY", sDownForceY);
+	sCharacterSettings.ReadFloat("Radius", sRadius);
+	sSettingsLoaded = true;
 }

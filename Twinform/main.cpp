@@ -20,7 +20,7 @@
 
 int main()
 {
-	PropertyReader windowSettings("Settings/window_settings.txt");
+	PropertyReader windowSettings{ "Settings/window_settings.txt" };
 
 	int windowWidth;
 	int windowHeight;

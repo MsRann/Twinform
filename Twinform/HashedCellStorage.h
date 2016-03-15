@@ -29,9 +29,6 @@ public:
 	void Insert(Simulatable& simulatable);
 	void InsertToKey(Simulatable& simulatable, sf::Vector2i key);
 	void Remove(Simulatable& simulatable);
-
-	bool OnGround(Simulatable& simulatable);
-
 	void UpdateCells();
 
 	bool IsColliding(Simulatable& simulatable);

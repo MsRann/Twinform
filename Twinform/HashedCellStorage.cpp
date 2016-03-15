@@ -46,32 +46,6 @@ void HashedCellStorage::Remove(Simulatable& simulatable)
 	}
 }
 
-bool HashedCellStorage::OnGround(Simulatable& simulatable)
-{
-	Particle particleCopy = simulatable.GetParticle();
-	// This is only possible since we only move in fixed delta times
-	// Integrate the particle forward one step, with only gravity, if it is hitting something it's gravity
-	// is causing it to come in contact with the ground and is therefore on the ground
-	particleCopy.SetVelocity(0.0f, 0.0f);
-	particleCopy.SetAcceleration(0.0f, 0.0f);
-	particleCopy.SetAcceleration(simulatable.GetGravity());
-	particleCopy.Integrate(MAX_DT);
-	sf::Vector2f pos = particleCopy.GetPosition();
-	sf::FloatRect bounds(pos.x, pos.y, simulatable.GetCollisionBounds().width, simulatable.GetCollisionBounds().height);
-	sf::Vector2i key = CreateKey(particleCopy.GetPosition());
-
-	if (mGrid.find(key) == mGrid.end())
-		return false;
-
-	for (auto sim : mGrid[key])
-	{
-		if (sim->GetCollisionBounds().intersects(bounds))
-			return true;
-	}
-
-	return false;
-}
-
 void HashedCellStorage::UpdateCells()
 {
 	std::vector<Simulatable*> toUpdate;

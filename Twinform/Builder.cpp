@@ -28,6 +28,7 @@ namespace
 			return;
 
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(sCamera->GetWindow());
+		// TODO: Copy pasted code
 		mousePosition.x += (int)(sCamera->GetView().getCenter().x 
 			- ((REAL)sCamera->GetWindowWidth() / 2.0f));
 		mousePosition.y += (int)(sCamera->GetView().getCenter().y 
@@ -71,6 +72,27 @@ namespace
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			offset += sf::Vector2f(0.0f, 0.05f);
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+		{
+			// TODO: Copy pasted code
+			sf::Vector2i mousePosition = sf::Mouse::getPosition(sCamera->GetWindow());
+			mousePosition.x += (int)(sCamera->GetView().getCenter().x
+				- ((REAL)sCamera->GetWindowWidth() / 2.0f));
+			mousePosition.y += (int)(sCamera->GetView().getCenter().y
+				- ((REAL)sCamera->GetWindowHeight() / 2.0f));
+			twinmath::SnapToGrid(mousePosition, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
+
+			HashedCellStorage& dynamicStorage = Simulator::GetDynamicStorage();
+			if (!dynamicStorage.IsPointColliding(mousePosition))
+			{
+				sf::Vector2f positionf((float)mousePosition.x, (float)mousePosition.y);
+				Creator::MakeCollectible(positionf,
+					sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF / 3),
+					static_cast<REAL>(GRID_HEIGHT_HALF / 3))
+					);
+			}
+		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && !sCharactersSpawned)
 		{

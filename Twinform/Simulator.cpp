@@ -6,6 +6,8 @@
 #include "HashedCellStorage.h"
 #include "TwinMath.h"
 #include "Debug.h"
+#include "Creator.h"
+#include "CommandStream.h"
 
 using namespace twinmath;
 
@@ -33,7 +35,7 @@ namespace
 
 		std::vector<std::pair<Simulatable*, sf::FloatRect>> dynamicCollisions;
 		if (sDynamicStorage.IsColliding(*character, dynamicCollisions))
-			HandleStaticCollisions(character, dynamicCollisions);
+			HandleDynamicCollisions(character, dynamicCollisions);
 	}
 
 	void HandleStaticCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions)
@@ -63,7 +65,15 @@ namespace
 
 	void HandleDynamicCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions)
 	{
-		HandleStaticCollisions(character, dynamicCollisions);
+		//HandleStaticCollisions(character, dynamicCollisions);
+		for (auto collision : dynamicCollisions)
+		{
+			if (collision.first->GetFlags() & CAN_PICKUP)
+			{
+				// Delete it like this because we are iterating over the list it will be deleted from
+				CommandStream::Add(new PickupCommand(collision.first->GetID()));
+			}
+		}
 	}
 
 	// This is a confusing way to fix collision.

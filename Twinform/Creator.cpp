@@ -26,6 +26,7 @@ namespace
 	// Overhead is only a 32-bit uint as the key id
 	std::unordered_map<uint32_t, ControllableCharacter> sControllableCharacters;
 	std::unordered_map<uint32_t, StaticGeometry> sStaticGeometry;
+	std::unordered_map<uint32_t, Collectible> sCollectibles;
 	// This will just act as an auto increment integer
 	uint32_t mUniqueId = 1;
 
@@ -56,6 +57,17 @@ namespace
 #ifdef BUILDING
 		Builder::SetCharacterSpawned(false);
 #endif
+	}
+
+	void DeleteCollectible(const uint32_t& id)
+	{
+		if (Creator::GetCollectible(id) == nullptr)
+			return;
+
+		Collectible& collectible = sCollectibles[id];
+		Renderer::Remove(id);
+		Simulator::DeleteDynamic(collectible);
+		sCollectibles.erase(id);
 	}
 }
 
@@ -111,6 +123,20 @@ void Creator::MakeControllableCharacter(const sf::Vector2f& start, const sf::Vec
 	++mUniqueId;
 }
 
+void Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vector2f& size)
+{
+	if (mUniqueId == 0)
+	{
+		std::cout << "Overflow of 32 bit int" << std::endl;
+		return;
+	}
+
+	sCollectibles[mUniqueId] = Collectible(start, size, mUniqueId);
+	Renderer::Add(mUniqueId, sCollectibles[mUniqueId].GetDrawable());
+	Simulator::Add(sCollectibles[mUniqueId]);
+	++mUniqueId;
+}
+
 ControllableCharacter* Creator::GetControllableCharacter(const uint32_t& id)
 {
 	if (sControllableCharacters.find(id) == sControllableCharacters.end())
@@ -125,6 +151,14 @@ StaticGeometry* Creator::GetStaticGeometry(const uint32_t& id)
 		return nullptr;
 
 	return &sStaticGeometry[id];
+}
+
+Collectible* Creator::GetCollectible(const uint32_t& id)
+{
+	if (sCollectibles.find(id) == sCollectibles.end())
+		return nullptr;
+
+	return &sCollectibles[id];
 }
 
 bool Creator::GetControllableCharacters(std::vector<ControllableCharacter*>& characters)
@@ -205,6 +239,11 @@ void Creator::Delete(const uint32_t& id)
 				DeleteStaticGeometry(id);
 			}
 			break;
+		case COLLECTIBLE:
+			{
+				DeleteCollectible(id);
+			}
+			break;
 		case UNDETERMINABLE:
 			{
 				std::cout << "Unable to delete object with id " << id << std::endl;
@@ -240,11 +279,21 @@ void Creator::Clear()
 
 TwinformObject Creator::GetType(const uint32_t& id)
 {
+	// Is this dumb?
+
+	// TODO:
+	//	This is stupid.
+
+	// This needs to be some base class, 'Creatable' perhaps
+
 	if (sControllableCharacters.find(id) != sControllableCharacters.end())
 		return CONTROLLABLE;
 
 	if (sStaticGeometry.find(id) != sStaticGeometry.end())
 		return STATIC;
+
+	if (sCollectibles.find(id) != sCollectibles.end())
+		return COLLECTIBLE;
 
 	return UNDETERMINABLE;
 }

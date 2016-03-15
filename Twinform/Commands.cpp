@@ -30,3 +30,15 @@ bool ClearCommand::Execute() const
 	Creator::Clear();
 	return true;
 }
+
+PickupCommand::PickupCommand(uint32_t id) :
+	mItemId(id)
+{
+}
+
+bool PickupCommand::Execute() const
+{
+	// TODO: This will need to do more
+	Creator::Delete(mItemId);
+	return true;
+}

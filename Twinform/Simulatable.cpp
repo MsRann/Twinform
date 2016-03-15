@@ -5,19 +5,21 @@
 
 Simulatable::Simulatable() :
 	mParticle(sf::Vector2f(0.0f, 0.0f))
-	,mCollisionBounds(sf::FloatRect(0.0f, 0.0f, 25.0f, 25.0f))
-	,mGravity(sf::Vector2f(0.0f, 0.0f))
-	,mPast(1000) // Will store the last ten second worth of particles
-	,mID(0)
+	, mCollisionBounds(sf::FloatRect(0.0f, 0.0f, 25.0f, 25.0f))
+	, mGravity(sf::Vector2f(0.0f, 0.0f))
+	, mPast(1000) // Will store the last ten second worth of particles
+	, mID(0)
+	, mFlags(0)
 {
 }
 
 Simulatable::Simulatable(sf::Vector2f start, sf::Vector2f size) :
 	mParticle(start)
-	,mCollisionBounds(start.x, start.y, size.x, size.y)
-	,mGravity(sf::Vector2f(0.0f, 0.0f))
-	,mPast(1000) // Will store the last ten second worth of particles
-	,mID(0)
+	, mCollisionBounds(start.x, start.y, size.x, size.y)
+	, mGravity(sf::Vector2f(0.0f, 0.0f))
+	, mPast(1000) // Will store the last ten second worth of particles
+	, mID(0)
+	, mFlags(0)
 {
 }
 

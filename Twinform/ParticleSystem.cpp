@@ -3,6 +3,8 @@
 
 #include <list>
 
+// TODO: Is this still good for anything?
+
 namespace
 {
 	std::list<ParticleSystem::Particle> mParticles;
@@ -10,6 +12,7 @@ namespace
 
 void ParticleSystem::Create(const sf::Vector2f& position)
 {
+	// TODO: Magic number
 	REAL size = 8.0f;
 	mParticles.push_back(ParticleSystem::Particle());
 	ParticleSystem::Particle& particle = mParticles.back();
@@ -34,6 +37,7 @@ void ParticleSystem::Update(REAL delta)
 		}
 		else
 		{
+			// TODO: Magic number
 			particle->mDrawable.rotate(5.0f);
 			particle->mTimeAlive += delta;
 			++particle;

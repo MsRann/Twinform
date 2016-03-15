@@ -35,7 +35,10 @@ ControllableCharacter::ControllableCharacter() :
 	LoadSettings();
 }
 
-ControllableCharacter::ControllableCharacter(sf::Vector2f start, sf::Vector2f size, ControllableControls controls, uint32_t id) :
+ControllableCharacter::ControllableCharacter(sf::Vector2f start
+	, sf::Vector2f size
+	, ControllableControls controls
+	, uint32_t id) :
 	Simulatable(start, size)
 	, mUpActionAccumulator(0.50f)
 	, mRightActionAccumulator(0.05f)
@@ -47,6 +50,7 @@ ControllableCharacter::ControllableCharacter(sf::Vector2f start, sf::Vector2f si
 	, mRewind(0)
 {
 	LoadSettings();
+	// TODO: Move id somewhere else
 	mID = id;
 	mDrawable.setPosition(start);
 	mDrawable.setRadius(sRadius);

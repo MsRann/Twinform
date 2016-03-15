@@ -128,6 +128,7 @@
     <ClCompile Include="ActionTimeAccumulator.cpp" />
     <ClCompile Include="Builder.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collectible.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="CommandStream.cpp" />
     <ClCompile Include="Creator.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="ActionTimeAccumulator.h" />
     <ClInclude Include="Builder.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collectible.h" />
     <ClInclude Include="Commands.h" />
     <ClInclude Include="CommandStream.h" />
     <ClInclude Include="Creator.h" />

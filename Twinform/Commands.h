@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 class Command
 {
@@ -32,4 +33,14 @@ class ClearCommand : public Command
 {
 public:
 	bool Execute() const;
+};
+
+class PickupCommand : public Command
+{
+public:
+	PickupCommand(uint32_t itemid);
+
+	bool Execute() const;
+private:
+	uint32_t mItemId;
 };

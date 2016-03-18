@@ -25,7 +25,7 @@ namespace
 	void HandleStaticCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions);
 	void HandleDynamicCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions);
 	void FixCharacterParticle(Simulatable* character, const sf::FloatRect& collision, const sf::Vector2f& hitVelocity, const sf::Vector2f& hitPosition, const sf::Vector2f& hitAcceleration);
-	sf::Vector2f CalculateIntersectionNormal(const sf::FloatRect& a, const sf::FloatRect& b);
+	bool SkipUpdate(Simulatable* character);
 
 	void ProcessCollisions(Simulatable* character)
 	{
@@ -70,8 +70,9 @@ namespace
 		{
 			if (collision.first->GetFlags() & CAN_PICKUP)
 			{
-				// Delete it like this because we are iterating over the list it will be deleted from
+				// Delete it like this because list is being iterated over
 				CommandStream::Add(new PickupCommand(collision.first->GetID()));
+				return;
 			}
 		}
 	}
@@ -105,6 +106,18 @@ namespace
 		characterParticle.SetPosition(position.x, hitPosition.y);
 		character->UpdateCollisionBounds();
 	}
+
+	bool SkipUpdate(Simulatable* character)
+	{
+		// Only check collision and update things that are moving
+		if (character->GetFlags() & STATIC_GEOMETRY)
+			return true;
+
+		if (character->GetFlags() & DONT_INTEGRATE)
+			return true;
+
+		return false;
+	}
 }
 
 HashedCellStorage& Simulator::GetDynamicStorage() 
@@ -131,7 +144,8 @@ void Simulator::Add(Simulatable& character)
 			float width = collisionRect.width;
 			while ((width -= GRID_WIDTH) > 0)
 			{
-				sStaticStorage.InsertToKey(character
+				sStaticStorage.InsertToKey(
+					character
 					, sf::Vector2i((int)floor((collisionRect.left + width) / GRID_WIDTH)
 					, (int)floor(collisionRect.top / GRID_HEIGHT)));
 			}
@@ -142,7 +156,8 @@ void Simulator::Add(Simulatable& character)
 			float height = collisionRect.height;
 			while ((height -= GRID_HEIGHT) > 0)
 			{
-				sStaticStorage.InsertToKey(character
+				sStaticStorage.InsertToKey(
+					character
 					, sf::Vector2i((int)floor(collisionRect.left / GRID_WIDTH)
 					, (int)floor((collisionRect.top + height) / GRID_HEIGHT)));
 			}
@@ -161,13 +176,13 @@ void Simulator::Add(Simulatable& character)
 void Simulator::DeleteDynamic(Simulatable& character)
 {
 	sDynamicStorage.Remove(character);
-	sCharacters.erase(std::find(sCharacters.begin(), sCharacters.end(), &character), sCharacters.end());
+	sCharacters.erase(std::find(sCharacters.begin(), sCharacters.end(), &character));
 }
 
 void Simulator::DeleteStatic(Simulatable& character)
 {
 	sStaticStorage.Remove(character);
-	sCharacters.erase(std::find(sCharacters.begin(), sCharacters.end(), &character), sCharacters.end());
+	sCharacters.erase(std::find(sCharacters.begin(), sCharacters.end(), &character));
 }
 
 void Simulator::SetWindow(TwinformWindow* window)
@@ -195,12 +210,7 @@ void Simulator::Simulate(REAL delta)
 	for (auto character : sCharacters)
 	{
 		// Only check collision and update things that are moving
-		if (character->GetFlags() & STATIC_GEOMETRY)
-			continue;
-
-		if (character->GetFlags() & DONT_INTEGRATE)
-			continue;
-
+		if (SkipUpdate(character)) continue;
 		// Pre update will set up variables and is usually overwritten by a derived class
 		character->PreUpdate(delta);
 	}
@@ -208,24 +218,14 @@ void Simulator::Simulate(REAL delta)
 	for (auto character : sCharacters)
 	{
 		// Only check collision and update things that are moving
-		if (character->GetFlags() & STATIC_GEOMETRY)
-			continue;
-
-		if (character->GetFlags() & DONT_INTEGRATE)
-			continue;
-
+		if (SkipUpdate(character)) continue;
 		character->PostUpdate(delta);
 	}
 
 	for (auto character : sCharacters)
 	{
 		// Only check collision and update things that are moving
-		if (character->GetFlags() & STATIC_GEOMETRY)
-			continue;
-
-		if (character->GetFlags() & DONT_INTEGRATE)
-			continue;
-
+		if (SkipUpdate(character)) continue;
 		ProcessCollisions(character);
 	}
 }

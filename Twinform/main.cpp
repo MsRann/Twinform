@@ -20,7 +20,7 @@
 
 int main()
 {
-	PropertyReader windowSettings{ "Settings/window_settings.txt" };
+	PropertyReader windowSettings("Settings/window_settings.txt");
 
 	int windowWidth;
 	int windowHeight;
@@ -86,27 +86,20 @@ int main()
 		Builder::Update(MAX_DT);
 #endif
 
-		// Execute one command per frame
-		CommandStream::Execute(1);
-
 		while (accumulator >= MAX_DT)
 		{
 			Simulator::Simulate(MAX_DT);
 			ParticleSystem::Update(MAX_DT);
+			// Execute one command per iteration
+			CommandStream::Execute(COMMAND_CONSUMPTION);
 			accumulator -= MAX_DT;
 			t += MAX_DT;
 		}
 
 		// For some reason the camera moves to player here, seems like a terrible spot for this code
-		if (Creator::GetControllableCharacters(characters))
+		if (Creator::GetPlayer())
 		{
-			// Average the y's and x's and center the camera to that
-			sf::Vector2f average(0.0f, 0.0f);
-			for (auto character : characters)
-				average += character->GetParticle().GetPosition();
-			average.x /= characters.size();
-			average.y /= characters.size();
-			camera.MoveTo(average);
+			camera.MoveTo(Creator::GetPlayer()->GetParticle().GetPosition());
 		}
 
 		Renderer::Render(window);

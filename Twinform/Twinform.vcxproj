@@ -133,6 +133,7 @@
     <ClCompile Include="CommandStream.cpp" />
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="HashedCellStorage.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="OSUtils.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PropertyReader.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="HashedCellStorage.h" />
+    <ClInclude Include="Inventory.h" />
     <ClInclude Include="OSUtils.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PropertyReader.h" />

@@ -1,5 +1,7 @@
 #include "Commands.h"
+
 #include "Creator.h"
+#include "Inventory.h"
 
 #include <iostream>
 
@@ -39,6 +41,7 @@ PickupCommand::PickupCommand(uint32_t id) :
 bool PickupCommand::Execute() const
 {
 	// TODO: This will need to do more
+	Inventory::AddCollectible(); // Increment collectible count
 	Creator::Delete(mItemId);
 	return true;
 }

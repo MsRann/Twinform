@@ -27,6 +27,7 @@ namespace
 	std::unordered_map<uint32_t, ControllableCharacter> sControllableCharacters;
 	std::unordered_map<uint32_t, StaticGeometry> sStaticGeometry;
 	std::unordered_map<uint32_t, Collectible> sCollectibles;
+	ControllableCharacter* sPlayer = nullptr;
 	// This will just act as an auto increment integer
 	uint32_t mUniqueId = 1;
 
@@ -35,7 +36,7 @@ namespace
 
 	void DeleteStaticGeometry(const uint32_t& id)
 	{
-		if (Creator::GetStaticGeometry(id) == nullptr)
+		if (sStaticGeometry.find(id) == sStaticGeometry.end())
 			return;
 
 		StaticGeometry& geometry = sStaticGeometry[id];
@@ -46,7 +47,7 @@ namespace
 
 	void DeleteControllableCharacter(const uint32_t& id)
 	{
-		if (Creator::GetControllableCharacter(id) == nullptr)
+		if (sControllableCharacters.find(id) == sControllableCharacters.end())
 			return;
 
 		ControllableCharacter& character = sControllableCharacters[id];
@@ -61,7 +62,7 @@ namespace
 
 	void DeleteCollectible(const uint32_t& id)
 	{
-		if (Creator::GetCollectible(id) == nullptr)
+		if (sCollectibles.find(id) == sCollectibles.end())
 			return;
 
 		Collectible& collectible = sCollectibles[id];
@@ -71,26 +72,25 @@ namespace
 	}
 }
 
-void Creator::MakeStaticGeometry(const sf::Vector2f& position, const sf::Vector2f& size)
+StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2f& position, const sf::Vector2f& size)
 {
 	if (mUniqueId == 0)
 	{
-		std::cout << "Overflow of 32 bit int" << std::endl;
-		return;
+		return nullptr;
 	}
 
 	sStaticGeometry[mUniqueId] = StaticGeometry(position, size, mUniqueId);
 	Renderer::Add(mUniqueId, sStaticGeometry[mUniqueId].GetDrawable());
 	Simulator::Add(sStaticGeometry[mUniqueId]);
 	++mUniqueId;
+	return &sStaticGeometry[mUniqueId - 1];
 }
 
-void Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf::Vector2f& size)
+StaticGeometry* Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf::Vector2f& size)
 {
 	if (mUniqueId == 0)
 	{
-		std::cout << "Overflow of 32 bit int" << std::endl;
-		return;
+		return nullptr;
 	}
 
 	sf::Vector2f pos;
@@ -100,77 +100,48 @@ void Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf:
 	Renderer::Add(mUniqueId, sStaticGeometry[mUniqueId].GetDrawable());
 	Simulator::Add(sStaticGeometry[mUniqueId]);
 	++mUniqueId;
+	return &sStaticGeometry[mUniqueId - 1];
 }
 
-void Creator::MakeStaticGeometry(const sf::Vector2i& position, const sf::Vector2f& size)
+StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2i& position, const sf::Vector2f& size)
 {
 	sf::Vector2f positionf((float)position.x, (float)position.y);
-	MakeStaticGeometry(positionf, size);
+	return MakeStaticGeometry(positionf, size);
 }
 
-void Creator::MakeControllableCharacter(const sf::Vector2f& start, const sf::Vector2f& size, ControllableControls controls, const sf::Vector2f& gravity)
+ControllableCharacter* Creator::MakeControllableCharacter(const sf::Vector2f& start, const sf::Vector2f& size, ControllableControls controls, const sf::Vector2f& gravity)
 {
 	if (mUniqueId == 0)
 	{
-		std::cout << "Overflow of 32 bit int" << std::endl;
-		return;
+		return nullptr;
 	}
 
 	sControllableCharacters[mUniqueId] = ControllableCharacter(start, size, controls, mUniqueId);
 	sControllableCharacters[mUniqueId].SetGravity(gravity);
 	Renderer::Add(mUniqueId, sControllableCharacters[mUniqueId].GetDrawable());
 	Simulator::Add(sControllableCharacters[mUniqueId]);
+	sPlayer = &sControllableCharacters[mUniqueId];
 	++mUniqueId;
+	return &sControllableCharacters[mUniqueId - 1];
 }
 
-void Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vector2f& size)
+Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vector2f& size)
 {
 	if (mUniqueId == 0)
 	{
-		std::cout << "Overflow of 32 bit int" << std::endl;
-		return;
+		return nullptr;
 	}
 
 	sCollectibles[mUniqueId] = Collectible(start, size, mUniqueId);
 	Renderer::Add(mUniqueId, sCollectibles[mUniqueId].GetDrawable());
 	Simulator::Add(sCollectibles[mUniqueId]);
 	++mUniqueId;
+	return &sCollectibles[mUniqueId - 1];
 }
 
-ControllableCharacter* Creator::GetControllableCharacter(const uint32_t& id)
+ControllableCharacter* Creator::GetPlayer()
 {
-	if (sControllableCharacters.find(id) == sControllableCharacters.end())
-		return nullptr;
-
-	return &sControllableCharacters[id];
-}
-
-StaticGeometry* Creator::GetStaticGeometry(const uint32_t& id)
-{
-	if (sStaticGeometry.find(id) == sStaticGeometry.end())
-		return nullptr;
-
-	return &sStaticGeometry[id];
-}
-
-Collectible* Creator::GetCollectible(const uint32_t& id)
-{
-	if (sCollectibles.find(id) == sCollectibles.end())
-		return nullptr;
-
-	return &sCollectibles[id];
-}
-
-bool Creator::GetControllableCharacters(std::vector<ControllableCharacter*>& characters)
-{
-	if (sControllableCharacters.size() == 0)
-		return false;
-
-	characters.clear();
-	for (auto &character : sControllableCharacters)
-		characters.push_back(&character.second);
-
-	return true;
+	return sPlayer;
 }
 
 void Creator::Save(const std::string& filename)

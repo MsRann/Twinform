@@ -1,7 +1,14 @@
 #include "OSUtils.h"
 
+#include <cstdint>
+
 // Dirent on windows is an abstraction to windows API calls. 
 #include "include\dirent.h"
+
+namespace
+{
+	static const uint32_t sMaxFileLength = 256;
+}
 
 void OSGetFilesInDir(const std::string& dirName, std::vector<std::string>& files)
 {
@@ -37,8 +44,8 @@ void OSDeleteFile(const std::string& dirName, const std::string& file)
 		if (file == ent->d_name)
 		{
 			// Max length of filepath
-			char filepath[256];
-			memset(filepath, 0, 256);
+			char filepath[sMaxFileLength];
+			memset(filepath, 0, sMaxFileLength);
 			strcat(filepath, dirName.c_str());
 			strcat(filepath, "/");
 			strcat(filepath, ent->d_name);

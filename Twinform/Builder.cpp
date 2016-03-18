@@ -41,9 +41,10 @@ namespace
 			HashedCellStorage& staticStorage = Simulator::GetStaticStorage();
 			if (!staticStorage.IsPointColliding(mousePosition))
 			{
-				Creator::MakeStaticGeometry(mousePosition,
-					sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF),
-					static_cast<REAL>(GRID_HEIGHT_HALF))
+				Creator::MakeStaticGeometry(
+					mousePosition
+					, sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF)
+					, static_cast<REAL>(GRID_HEIGHT_HALF))
 				);
 			}
 		}
@@ -77,41 +78,36 @@ namespace
 		{
 			// TODO: Copy pasted code
 			sf::Vector2i mousePosition = sf::Mouse::getPosition(sCamera->GetWindow());
-			mousePosition.x += (int)(sCamera->GetView().getCenter().x
+			mousePosition.x += 
+				(int)(sCamera->GetView().getCenter().x
 				- ((REAL)sCamera->GetWindowWidth() / 2.0f));
-			mousePosition.y += (int)(sCamera->GetView().getCenter().y
+			mousePosition.y += 
+				(int)(sCamera->GetView().getCenter().y
 				- ((REAL)sCamera->GetWindowHeight() / 2.0f));
+
 			twinmath::SnapToGrid(mousePosition, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
 
 			HashedCellStorage& dynamicStorage = Simulator::GetDynamicStorage();
 			if (!dynamicStorage.IsPointColliding(mousePosition))
 			{
 				sf::Vector2f positionf((float)mousePosition.x, (float)mousePosition.y);
-				Creator::MakeCollectible(positionf,
-					sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF / 3),
-					static_cast<REAL>(GRID_HEIGHT_HALF / 3))
-					);
+				Creator::MakeCollectible(
+					positionf
+					, sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF / 3)
+					, static_cast<REAL>(GRID_HEIGHT_HALF / 3))
+				);
 			}
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && !sCharactersSpawned)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
 		{
-			Creator::MakeControllableCharacter(sf::Vector2f(0, 300), sf::Vector2f(25.0f, 25.0f), CONTROLS_WASD, sf::Vector2f(0.0f, 10.0f));
-			sCharactersSpawned = true;
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && sCharactersSpawned)
-		{
-			std::vector<ControllableCharacter*> characters;
-			if (Creator::GetControllableCharacters(characters))
+			if (!Creator::GetPlayer())
 			{
-				for (unsigned int i = 0; i < characters.size(); ++i)
-				{
-					Particle& fCharacterParticle = characters[i]->GetParticle();
-					fCharacterParticle.ZeroMovement();
-					// God, this is fucking dumb // I wish I had written why this is dumb when I wrote that comment
-					fCharacterParticle.SetPosition(sf::Vector2f(0, 320.0f + 60.0f * (float)i));
-				}
+				Creator::MakeControllableCharacter(sf::Vector2f(0, 300), sf::Vector2f(25.0f, 25.0f), CONTROLS_WASD, sf::Vector2f(0.0f, 10.0f));
+			}
+			else
+			{
+				Creator::GetPlayer()->GetParticle().SetPosition(sf::Vector2f(0, 300));
 			}
 		}
 

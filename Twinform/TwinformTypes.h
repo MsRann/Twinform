@@ -9,6 +9,9 @@ static const REAL MASS_MAX = -1.0f;
 static const REAL FLOAT_SMALL = 0.001f;
 static const REAL INVERSE_MASS_SMALL = 0.000001f;
 
+// Number of commands consumed per physics update
+static const unsigned int COMMAND_CONSUMPTION = 1;
+
 static const unsigned int GRID_WIDTH = 50;
 static const unsigned int GRID_HEIGHT = 50;
 
@@ -23,7 +26,8 @@ enum PhysicalFlags
 	CAN_PICKUP = 0x8,
 };
 
-enum TwinformObject {
+enum TwinformObject 
+{
 	STATIC, 
 	CONTROLLABLE,
 	COLLECTIBLE,

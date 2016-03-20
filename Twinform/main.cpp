@@ -5,7 +5,6 @@
 #include "Renderer.h"
 #include "Simulator.h"
 #include "Creator.h"
-#include "ControllableCharacter.h"
 #include "StaticGeometry.h"
 #include "TwinMath.h"
 #include "Camera.h"
@@ -75,7 +74,6 @@ int main()
   Builder::Initialize(camera);
 #endif
 
-  std::vector<ControllableCharacter*> characters;
   while (window.isOpen())
   {
     REAL time = Renderer::GetLastFrametime();

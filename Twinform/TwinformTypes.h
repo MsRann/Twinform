@@ -29,7 +29,7 @@ enum PhysicalFlags
 enum TwinformObject 
 {
   STATIC, 
-  CONTROLLABLE,
+  NEUTRON,
   COLLECTIBLE,
   UNDETERMINABLE
 };

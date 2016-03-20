@@ -142,7 +142,6 @@
     <ClCompile Include="PropertyReader.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Simulatable.cpp" />
-    <ClCompile Include="ControllableCharacter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -171,7 +170,6 @@
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Simulatable.h" />
-    <ClInclude Include="ControllableCharacter.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Simulator.h" />

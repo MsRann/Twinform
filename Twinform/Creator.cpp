@@ -24,15 +24,15 @@ namespace
 {
   // This storage can be used to look up characters by ID, maybe useful, maybe not.
   // Overhead is only a 32-bit uint as the key id
-  std::unordered_map<uint32_t, ControllableCharacter*> sControllableCharacters;
+  std::unordered_map<uint32_t, Neutron*> sNeutrons;
   std::unordered_map<uint32_t, StaticGeometry*> sStaticGeometry;
   std::unordered_map<uint32_t, Collectible*> sCollectibles;
-  ControllableCharacter* sPlayer = nullptr;
+  Neutron* sPlayer = nullptr;
   // This will just act as an auto increment integer
   uint32_t mUniqueId = 1;
 
   void DeleteStaticGeometry(const uint32_t& id);
-  void DeleteControllableCharacter(const uint32_t& id);
+  void DeleteNeutron(const uint32_t& id);
 
   void DeleteStaticGeometry(const uint32_t& id)
   {
@@ -46,16 +46,16 @@ namespace
     delete geometry;
   }
 
-  void DeleteControllableCharacter(const uint32_t& id)
+  void DeleteNeutron(const uint32_t& id)
   {
-    if (sControllableCharacters.find(id) == sControllableCharacters.end())
+    if (sNeutrons.find(id) == sNeutrons.end())
       return;
 
-    ControllableCharacter* character = sControllableCharacters[id];
+    Neutron* neutron = sNeutrons[id];
     Renderer::Remove(id);
-    Simulator::DeleteDynamic(*character);
-    sControllableCharacters.erase(id);
-    delete character;
+    Simulator::DeleteDynamic(*neutron);
+    sNeutrons.erase(id);
+    delete neutron;
 
 #ifdef BUILDING
     Builder::SetCharacterSpawned(false);
@@ -112,20 +112,30 @@ StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2i& position, const 
   return MakeStaticGeometry(positionf, size);
 }
 
-ControllableCharacter* Creator::MakeControllableCharacter(const sf::Vector2f& start, const sf::Vector2f& size, ControllableControls controls, const sf::Vector2f& gravity)
+Neutron* Creator::MakeNeutron(
+  Brain* brain
+  , const sf::Vector2f& start
+  , const sf::Vector2f& size
+  , const sf::Vector2f& gravity)
 {
   if (mUniqueId == 0)
   {
     return nullptr;
   }
 
-  sControllableCharacters[mUniqueId] = new ControllableCharacter(start, size, controls, mUniqueId);
-  sControllableCharacters[mUniqueId]->SetGravity(gravity);
-  Renderer::Add(mUniqueId, sControllableCharacters[mUniqueId]->GetDrawable());
-  Simulator::Add(*sControllableCharacters[mUniqueId]);
-  sPlayer = sControllableCharacters[mUniqueId];
+  sNeutrons[mUniqueId] = new Neutron(
+    brain
+    , start
+    , size
+    , mUniqueId);
+
+  sNeutrons[mUniqueId]->SetGravity(gravity);
+  Renderer::Add(mUniqueId, sNeutrons[mUniqueId]->GetDrawable());
+  Simulator::Add(*sNeutrons[mUniqueId]);
+  sPlayer = sNeutrons[mUniqueId];
   ++mUniqueId;
-  return sControllableCharacters[mUniqueId - 1];
+
+  return sNeutrons[mUniqueId - 1];
 }
 
 Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vector2f& size)
@@ -142,7 +152,7 @@ Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vecto
   return sCollectibles[mUniqueId - 1];
 }
 
-ControllableCharacter* Creator::GetPlayer()
+Neutron* Creator::GetPlayer()
 {
   return sPlayer;
 }
@@ -203,9 +213,9 @@ void Creator::Delete(const uint32_t& id)
 
   switch (type)
   {
-    case CONTROLLABLE:
+    case NEUTRON:
       {
-        DeleteControllableCharacter(id);
+        DeleteNeutron(id);
       }
       break;
     case STATIC:
@@ -239,11 +249,11 @@ void Creator::Clear()
     Creator::Delete(id);
   }
 
-  std::unordered_map<uint32_t, ControllableCharacter*>::iterator itr2 = sControllableCharacters.begin();
-  while (itr2 != sControllableCharacters.end())
+  std::unordered_map<uint32_t, Neutron*>::iterator itr2 = sNeutrons.begin();
+  while (itr2 != sNeutrons.end())
   {
     uint32_t id = itr2->second->GetID();
-    std::unordered_map<uint32_t, ControllableCharacter*>::iterator toerase = itr2;
+    std::unordered_map<uint32_t, Neutron*>::iterator toerase = itr2;
     ++itr2;
     Creator::Delete(id);
   }
@@ -260,8 +270,8 @@ TwinformObject Creator::GetType(const uint32_t& id)
 
   // This needs to be some base class, 'Creatable' perhaps
 
-  if (sControllableCharacters.find(id) != sControllableCharacters.end())
-    return CONTROLLABLE;
+  if (sNeutrons.find(id) != sNeutrons.end())
+    return NEUTRON;
 
   if (sStaticGeometry.find(id) != sStaticGeometry.end())
     return STATIC;

@@ -21,7 +21,6 @@ namespace
   TwinformWindow* sWindow = nullptr;
 
   // Private functions
-  void ProcessCollisions();
   void HandleStaticCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions);
   void HandleDynamicCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions);
   void FixCharacterParticle(Simulatable* character, const sf::FloatRect& collision, const sf::Vector2f& hitVelocity, const sf::Vector2f& hitPosition, const sf::Vector2f& hitAcceleration);

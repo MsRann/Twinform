@@ -48,9 +48,9 @@ public:
   uint32_t GetID();
 
   sf::FloatRect mCollisionBounds;
+  sf::Vector2f mGravity;
 protected:
   Particle mParticle;
-  sf::Vector2f mGravity;
   sf::Vector2i mPrevKey;
 
   uint32_t mFlags;

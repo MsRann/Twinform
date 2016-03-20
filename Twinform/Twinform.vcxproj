@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionTimeAccumulator.cpp" />
+    <ClCompile Include="Brain.cpp" />
     <ClCompile Include="Builder.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collectible.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="Neutron.cpp" />
     <ClCompile Include="OSUtils.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PlayerControls.cpp" />
     <ClCompile Include="PropertyReader.cpp" />
     <ClCompile Include="Simulatable.cpp" />
     <ClCompile Include="ControllableCharacter.cpp" />
@@ -150,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionTimeAccumulator.h" />
+    <ClInclude Include="Brain.h" />
     <ClInclude Include="Builder.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collectible.h" />
@@ -162,6 +165,7 @@
     <ClInclude Include="Neutron.h" />
     <ClInclude Include="OSUtils.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PropertyReader.h" />
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="Simulatable.h" />

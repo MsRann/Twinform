@@ -24,9 +24,9 @@ namespace
 {
   // This storage can be used to look up characters by ID, maybe useful, maybe not.
   // Overhead is only a 32-bit uint as the key id
-  std::unordered_map<uint32_t, ControllableCharacter> sControllableCharacters;
-  std::unordered_map<uint32_t, StaticGeometry> sStaticGeometry;
-  std::unordered_map<uint32_t, Collectible> sCollectibles;
+  std::unordered_map<uint32_t, ControllableCharacter*> sControllableCharacters;
+  std::unordered_map<uint32_t, StaticGeometry*> sStaticGeometry;
+  std::unordered_map<uint32_t, Collectible*> sCollectibles;
   ControllableCharacter* sPlayer = nullptr;
   // This will just act as an auto increment integer
   uint32_t mUniqueId = 1;
@@ -39,10 +39,11 @@ namespace
     if (sStaticGeometry.find(id) == sStaticGeometry.end())
       return;
 
-    StaticGeometry& geometry = sStaticGeometry[id];
+    StaticGeometry* geometry = sStaticGeometry[id];
     Renderer::Remove(id);
-    Simulator::DeleteStatic(geometry);
+    Simulator::DeleteStatic(*geometry);
     sStaticGeometry.erase(id);
+    delete geometry;
   }
 
   void DeleteControllableCharacter(const uint32_t& id)
@@ -50,10 +51,11 @@ namespace
     if (sControllableCharacters.find(id) == sControllableCharacters.end())
       return;
 
-    ControllableCharacter& character = sControllableCharacters[id];
+    ControllableCharacter* character = sControllableCharacters[id];
     Renderer::Remove(id);
-    Simulator::DeleteDynamic(character);
+    Simulator::DeleteDynamic(*character);
     sControllableCharacters.erase(id);
+    delete character;
 
 #ifdef BUILDING
     Builder::SetCharacterSpawned(false);
@@ -65,10 +67,11 @@ namespace
     if (sCollectibles.find(id) == sCollectibles.end())
       return;
 
-    Collectible& collectible = sCollectibles[id];
+    Collectible* collectible = sCollectibles[id];
     Renderer::Remove(id);
-    Simulator::DeleteDynamic(collectible);
+    Simulator::DeleteDynamic(*collectible);
     sCollectibles.erase(id);
+    delete collectible;
   }
 }
 
@@ -79,11 +82,11 @@ StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2f& position, const 
     return nullptr;
   }
 
-  sStaticGeometry[mUniqueId] = StaticGeometry(position, size, mUniqueId);
-  Renderer::Add(mUniqueId, sStaticGeometry[mUniqueId].GetDrawable());
-  Simulator::Add(sStaticGeometry[mUniqueId]);
+  sStaticGeometry[mUniqueId] = new StaticGeometry(position, size, mUniqueId);
+  Renderer::Add(mUniqueId, sStaticGeometry[mUniqueId]->GetDrawable());
+  Simulator::Add(*sStaticGeometry[mUniqueId]);
   ++mUniqueId;
-  return &sStaticGeometry[mUniqueId - 1];
+  return sStaticGeometry[mUniqueId - 1];
 }
 
 StaticGeometry* Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf::Vector2f& size)
@@ -96,11 +99,11 @@ StaticGeometry* Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position
   sf::Vector2f pos;
   pos.x = static_cast<REAL>(position.x) * size.x;
   pos.y = static_cast<REAL>(position.y) * size.y;
-  sStaticGeometry[mUniqueId] = StaticGeometry(pos, size, mUniqueId);
-  Renderer::Add(mUniqueId, sStaticGeometry[mUniqueId].GetDrawable());
-  Simulator::Add(sStaticGeometry[mUniqueId]);
+  sStaticGeometry[mUniqueId] = new StaticGeometry(pos, size, mUniqueId);
+  Renderer::Add(mUniqueId, sStaticGeometry[mUniqueId]->GetDrawable());
+  Simulator::Add(*sStaticGeometry[mUniqueId]);
   ++mUniqueId;
-  return &sStaticGeometry[mUniqueId - 1];
+  return sStaticGeometry[mUniqueId - 1];
 }
 
 StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2i& position, const sf::Vector2f& size)
@@ -116,13 +119,13 @@ ControllableCharacter* Creator::MakeControllableCharacter(const sf::Vector2f& st
     return nullptr;
   }
 
-  sControllableCharacters[mUniqueId] = ControllableCharacter(start, size, controls, mUniqueId);
-  sControllableCharacters[mUniqueId].SetGravity(gravity);
-  Renderer::Add(mUniqueId, sControllableCharacters[mUniqueId].GetDrawable());
-  Simulator::Add(sControllableCharacters[mUniqueId]);
-  sPlayer = &sControllableCharacters[mUniqueId];
+  sControllableCharacters[mUniqueId] = new ControllableCharacter(start, size, controls, mUniqueId);
+  sControllableCharacters[mUniqueId]->SetGravity(gravity);
+  Renderer::Add(mUniqueId, sControllableCharacters[mUniqueId]->GetDrawable());
+  Simulator::Add(*sControllableCharacters[mUniqueId]);
+  sPlayer = sControllableCharacters[mUniqueId];
   ++mUniqueId;
-  return &sControllableCharacters[mUniqueId - 1];
+  return sControllableCharacters[mUniqueId - 1];
 }
 
 Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vector2f& size)
@@ -132,11 +135,11 @@ Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vecto
     return nullptr;
   }
 
-  sCollectibles[mUniqueId] = Collectible(start, size, mUniqueId);
-  Renderer::Add(mUniqueId, sCollectibles[mUniqueId].GetDrawable());
-  Simulator::Add(sCollectibles[mUniqueId]);
+  sCollectibles[mUniqueId] = new Collectible(start, size, mUniqueId);
+  Renderer::Add(mUniqueId, sCollectibles[mUniqueId]->GetDrawable());
+  Simulator::Add(*sCollectibles[mUniqueId]);
   ++mUniqueId;
-  return &sCollectibles[mUniqueId - 1];
+  return sCollectibles[mUniqueId - 1];
 }
 
 ControllableCharacter* Creator::GetPlayer()
@@ -156,7 +159,7 @@ void Creator::Save(const std::string& filename)
   rapidjson::Value geomArr(rapidjson::kArrayType);
   for (auto g : sStaticGeometry)
   {
-    sf::Vector2f p = g.second.GetParticle().GetPosition();
+    sf::Vector2f p = g.second->GetParticle().GetPosition();
     sf::Vector2i tile = twinmath::CreateGrid(p, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
     rapidjson::Value geom;
     geom.SetObject();
@@ -227,20 +230,20 @@ void Creator::Delete(const uint32_t& id)
 
 void Creator::Clear()
 {
-  std::unordered_map<uint32_t, StaticGeometry>::iterator itr = sStaticGeometry.begin();
+  std::unordered_map<uint32_t, StaticGeometry*>::iterator itr = sStaticGeometry.begin();
   while (itr != sStaticGeometry.end())
   {
-    uint32_t id = itr->second.GetID();
-    std::unordered_map<uint32_t, StaticGeometry>::iterator toerase = itr;
+    uint32_t id = itr->second->GetID();
+    std::unordered_map<uint32_t, StaticGeometry*>::iterator toerase = itr;
     ++itr;
     Creator::Delete(id);
   }
 
-  std::unordered_map<uint32_t, ControllableCharacter>::iterator itr2 = sControllableCharacters.begin();
+  std::unordered_map<uint32_t, ControllableCharacter*>::iterator itr2 = sControllableCharacters.begin();
   while (itr2 != sControllableCharacters.end())
   {
-    uint32_t id = itr2->second.GetID();
-    std::unordered_map<uint32_t, ControllableCharacter>::iterator toerase = itr2;
+    uint32_t id = itr2->second->GetID();
+    std::unordered_map<uint32_t, ControllableCharacter*>::iterator toerase = itr2;
     ++itr2;
     Creator::Delete(id);
   }

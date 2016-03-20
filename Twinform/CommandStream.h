@@ -4,6 +4,6 @@
 
 namespace CommandStream
 {
-	void Add(Command* command);
-	void Execute(size_t count);
+  void Add(Command* command);
+  void Execute(size_t count);
 }

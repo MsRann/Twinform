@@ -13,177 +13,177 @@ HashedCellStorage::~HashedCellStorage()
 
 void HashedCellStorage::Insert(Simulatable& simulatable)
 {
-	sf::Vector2i key = CreateKey(simulatable);
-	simulatable.SetPrevKey(key);
-	InsertToKey(simulatable, key);
+  sf::Vector2i key = CreateKey(simulatable);
+  simulatable.SetPrevKey(key);
+  InsertToKey(simulatable, key);
 }
 
 void HashedCellStorage::InsertToKey(Simulatable& simulatable, sf::Vector2i key)
 {
-	mGrid[key].push_back(&simulatable);
+  mGrid[key].push_back(&simulatable);
 }
 
 void HashedCellStorage::Remove(Simulatable& simulatable)
 {
-	// Clamp to a cell
-	sf::Vector2i key = simulatable.GetPrevKey();
-	// Find list by grid cell the collidable object is in
-	CollisionMap::const_iterator got = mGrid.find(key);
-	if (got != mGrid.end())
-	{
-		for (std::vector<Simulatable*>::iterator it = mGrid[key].begin(); it != mGrid[key].end(); ++it)
-		{
-			if (*it == &simulatable)
-			{
-				mGrid[key].erase(it);
-				break;
-			}
-		}
-		if (mGrid[key].size() == 0)
-		{
-			mGrid.erase(key);
-		}
-	}
+  // Clamp to a cell
+  sf::Vector2i key = simulatable.GetPrevKey();
+  // Find list by grid cell the collidable object is in
+  CollisionMap::const_iterator got = mGrid.find(key);
+  if (got != mGrid.end())
+  {
+    for (std::vector<Simulatable*>::iterator it = mGrid[key].begin(); it != mGrid[key].end(); ++it)
+    {
+      if (*it == &simulatable)
+      {
+        mGrid[key].erase(it);
+        break;
+      }
+    }
+    if (mGrid[key].size() == 0)
+    {
+      mGrid.erase(key);
+    }
+  }
 }
 
 void HashedCellStorage::UpdateCells()
 {
-	std::vector<Simulatable*> toUpdate;
+  std::vector<Simulatable*> toUpdate;
 
-	for (auto bucket : mGrid)
-	{
-		for (auto sim : bucket.second)
-		{
-			// Is this bad? Should it error or continue? I have no idea.
-			if (sim == nullptr)
-			{
-				std::cout << "HASHED GRID CELL HAS NULLPTR!!!!!" << std::endl;
-				continue;
-			}
+  for (auto bucket : mGrid)
+  {
+    for (auto sim : bucket.second)
+    {
+      // Is this bad? Should it error or continue? I have no idea.
+      if (sim == nullptr)
+      {
+        std::cout << "HASHED GRID CELL HAS NULLPTR!!!!!" << std::endl;
+        continue;
+      }
 
-			sf::Vector2i prevKey = sim->GetPrevKey();
-			// Calculate new key
-			sf::Vector2i key = CreateKey(*sim);
-			// If they differ update the map
-			if (prevKey != key)
-				toUpdate.push_back(sim);
-		}
-	}
+      sf::Vector2i prevKey = sim->GetPrevKey();
+      // Calculate new key
+      sf::Vector2i key = CreateKey(*sim);
+      // If they differ update the map
+      if (prevKey != key)
+        toUpdate.push_back(sim);
+    }
+  }
 
-	for (auto update : toUpdate)
-	{
-		Remove(*update);
-		Insert(*update);
-	}
+  for (auto update : toUpdate)
+  {
+    Remove(*update);
+    Insert(*update);
+  }
 }
 
 bool HashedCellStorage::IsColliding(Simulatable& simulatable)
 {
-	std::vector<std::pair<Simulatable*, sf::FloatRect>> outs;
-	return IsColliding(simulatable, outs);
+  std::vector<std::pair<Simulatable*, sf::FloatRect>> outs;
+  return IsColliding(simulatable, outs);
 }
 
 bool HashedCellStorage::IsColliding(Simulatable& simulatable, std::vector<std::pair<Simulatable*, sf::FloatRect>>& simulatablesHit)
 {
-	sf::Vector2i key = simulatable.GetPrevKey();
+  sf::Vector2i key = simulatable.GetPrevKey();
 
-	// Get all adjacent keys, right, left, up, down
-	// TODO: If the simulatable will surpass a grid in a single update this won't work (that situation is also unlikely)
-	std::vector<sf::Vector2i> keys;
-	keys.push_back(key);
-	keys.push_back(key + sf::Vector2i(1, 0));
-	keys.push_back(key + sf::Vector2i(-1, 0));
-	keys.push_back(key + sf::Vector2i(0, -1));
-	keys.push_back(key + sf::Vector2i(0, 1));
-	// Get diagonal keys
-	keys.push_back(key + sf::Vector2i(1, 1));
-	keys.push_back(key + sf::Vector2i(-1, 1));
-	keys.push_back(key + sf::Vector2i(1, -1));
-	keys.push_back(key + sf::Vector2i(-1, -1));
+  // Get all adjacent keys, right, left, up, down
+  // TODO: If the simulatable will surpass a grid in a single update this won't work (that situation is also unlikely)
+  std::vector<sf::Vector2i> keys;
+  keys.push_back(key);
+  keys.push_back(key + sf::Vector2i(1, 0));
+  keys.push_back(key + sf::Vector2i(-1, 0));
+  keys.push_back(key + sf::Vector2i(0, -1));
+  keys.push_back(key + sf::Vector2i(0, 1));
+  // Get diagonal keys
+  keys.push_back(key + sf::Vector2i(1, 1));
+  keys.push_back(key + sf::Vector2i(-1, 1));
+  keys.push_back(key + sf::Vector2i(1, -1));
+  keys.push_back(key + sf::Vector2i(-1, -1));
 
-	for (auto key : keys)
-	{
-		if (mGrid.find(key) == mGrid.end())
-			continue;
+  for (auto key : keys)
+  {
+    if (mGrid.find(key) == mGrid.end())
+      continue;
 
-		for (auto sim : mGrid[key])
-		{
-			// Can't collide with itself
-			if (sim != &simulatable)
-			{
-				// Intersection is the square of the intersection with the simulatable
-				sf::FloatRect intersection;
-				if (simulatable.GetCollisionBounds().intersects(sim->GetCollisionBounds(), intersection))
-					simulatablesHit.push_back(std::pair<Simulatable*, sf::FloatRect>(sim, intersection));
-			}
-		}
-	}
+    for (auto sim : mGrid[key])
+    {
+      // Can't collide with itself
+      if (sim != &simulatable)
+      {
+        // Intersection is the square of the intersection with the simulatable
+        sf::FloatRect intersection;
+        if (simulatable.GetCollisionBounds().intersects(sim->GetCollisionBounds(), intersection))
+          simulatablesHit.push_back(std::pair<Simulatable*, sf::FloatRect>(sim, intersection));
+      }
+    }
+  }
 
-	if (simulatablesHit.size() > 0)
-		return true;
+  if (simulatablesHit.size() > 0)
+    return true;
 
-	return false;
+  return false;
 }
 
 bool HashedCellStorage::IsPointColliding(sf::Vector2f point)
 {
-	Simulatable* sim = nullptr;
+  Simulatable* sim = nullptr;
 
-	return IsPointColliding(point, sim);
+  return IsPointColliding(point, sim);
 }
 
 bool HashedCellStorage::IsPointColliding(sf::Vector2i point)
 {
-	Simulatable* sim = nullptr;
+  Simulatable* sim = nullptr;
 
-	return IsPointColliding(point, sim);
+  return IsPointColliding(point, sim);
 }
 
 bool HashedCellStorage::IsPointColliding(sf::Vector2f point, Simulatable*& simulatableHit)
 {
-	sf::Vector2i key = CreateKey(point);
+  sf::Vector2i key = CreateKey(point);
 
-	for (auto sim : mGrid[key])
-	{
-		if (sim->GetCollisionBounds().contains(point))
-		{
-			simulatableHit = sim;
-			return true;
-		}
-	}
+  for (auto sim : mGrid[key])
+  {
+    if (sim->GetCollisionBounds().contains(point))
+    {
+      simulatableHit = sim;
+      return true;
+    }
+  }
 
-	return false;
+  return false;
 }
 
 bool HashedCellStorage::IsPointColliding(sf::Vector2i point, Simulatable*& simulatableHit)
 {
-	sf::Vector2i key = CreateKey(point);
-	sf::Vector2f pointf((float)point.x, (float)point.y);
+  sf::Vector2i key = CreateKey(point);
+  sf::Vector2f pointf((float)point.x, (float)point.y);
 
-	for (auto sim : mGrid[key])
-	{
-		if (sim->GetCollisionBounds().contains(pointf))
-		{
-			simulatableHit = sim;
-			return true;
-		}
-	}
+  for (auto sim : mGrid[key])
+  {
+    if (sim->GetCollisionBounds().contains(pointf))
+    {
+      simulatableHit = sim;
+      return true;
+    }
+  }
 
-	return false;
+  return false;
 }
 
 sf::Vector2i HashedCellStorage::CreateKey(const Simulatable& sim) const
 {
-	sf::Vector2f pos = sim.GetParticleConst().GetPosition();
-	return CreateKey(pos);
+  sf::Vector2f pos = sim.GetParticleConst().GetPosition();
+  return CreateKey(pos);
 }
 
 sf::Vector2i HashedCellStorage::CreateKey(const sf::Vector2f& pos) const
 {
-	return sf::Vector2i((int)floor(pos.x / GRID_WIDTH_HALF), (int)floor(pos.y / GRID_HEIGHT_HALF));
+  return sf::Vector2i((int)floor(pos.x / GRID_WIDTH_HALF), (int)floor(pos.y / GRID_HEIGHT_HALF));
 }
 
 sf::Vector2i HashedCellStorage::CreateKey(const sf::Vector2i& pos) const
 {
-	return sf::Vector2i(pos.x / GRID_WIDTH_HALF, pos.y / GRID_HEIGHT_HALF);
+  return sf::Vector2i(pos.x / GRID_WIDTH_HALF, pos.y / GRID_HEIGHT_HALF);
 }

@@ -6,14 +6,14 @@
 
 namespace ParticleSystem
 {
-	class Particle
-	{
-	public:
-		REAL mTimeToLive;
-		REAL mTimeAlive;
-		sf::RectangleShape mDrawable;
-	};
+  class Particle
+  {
+  public:
+    REAL mTimeToLive;
+    REAL mTimeAlive;
+    sf::RectangleShape mDrawable;
+  };
 
-	void Create(const sf::Vector2f& position);
-	void Update(REAL delta);
+  void Create(const sf::Vector2f& position);
+  void Update(REAL delta);
 };

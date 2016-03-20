@@ -6,15 +6,15 @@
 
 inline void DebugPrint(const sf::Vector2f& v)
 {
-	std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
+  std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
 }
 
 inline void DebugPrint(const sf::Vector2i& v)
 {
-	std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
+  std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
 }
 
 inline void DebugPrint(const sf::FloatRect& r)
 {
-	std::cout << "(" << r.left << ", " << r.top << " - w: "<< r.width << " h: " << r.height << ")" << std::endl;
+  std::cout << "(" << r.left << ", " << r.top << " - w: "<< r.width << " h: " << r.height << ")" << std::endl;
 }

@@ -16,30 +16,30 @@ mLimit(limit)
 
 void ActionTimeAccumulator::Add(REAL delta)
 {
-	mAccumulation += delta;
+  mAccumulation += delta;
 }
 
 void ActionTimeAccumulator::Subtract(REAL delta)
 {
-	mAccumulation -= delta;
+  mAccumulation -= delta;
 }
 
 void ActionTimeAccumulator::SetLimit(REAL limit)
 {
-	mLimit = limit;
+  mLimit = limit;
 }
 
 void ActionTimeAccumulator::Reset()
 {
-	mAccumulation = 0.0f;
+  mAccumulation = 0.0f;
 }
 
 bool ActionTimeAccumulator::IsReady()
 {
-	if (mAccumulation >= mLimit - FLOAT_SMALL)
-		return true;
+  if (mAccumulation >= mLimit - FLOAT_SMALL)
+    return true;
 
-	return false;
+  return false;
 }
 
 REAL ActionTimeAccumulator::GetAccumulation()

@@ -20,92 +20,92 @@
 
 int main()
 {
-	PropertyReader windowSettings("Settings/window_settings.txt");
+  PropertyReader windowSettings("Settings/window_settings.txt");
 
-	int windowWidth;
-	int windowHeight;
-	std::string windowTitle;
-	int windowStyle;
+  int windowWidth;
+  int windowHeight;
+  std::string windowTitle;
+  int windowStyle;
 
-	windowSettings.ReadInt("WindowWidth", windowWidth);
-	windowSettings.ReadInt("WindowHeight", windowHeight);
-	windowSettings.ReadString("WindowTitle", windowTitle);
-	windowSettings.ReadInt("WindowStyle", windowStyle);
+  windowSettings.ReadInt("WindowWidth", windowWidth);
+  windowSettings.ReadInt("WindowHeight", windowHeight);
+  windowSettings.ReadString("WindowTitle", windowTitle);
+  windowSettings.ReadInt("WindowStyle", windowStyle);
 
-	ParticleSystem::Create(sf::Vector2f(0.0f, 0.0f));
+  ParticleSystem::Create(sf::Vector2f(0.0f, 0.0f));
 
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 2;
-	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), windowTitle, windowStyle, settings);
-	sf::View view;
+  sf::ContextSettings settings;
+  settings.antialiasingLevel = 2;
+  sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), windowTitle, windowStyle, settings);
+  sf::View view;
 
-	view.reset(sf::FloatRect(0, 0, (float)windowWidth, (float)windowHeight));
-	view.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
+  view.reset(sf::FloatRect(0, 0, (float)windowWidth, (float)windowHeight));
+  view.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
 
-	window.setView(view);
+  window.setView(view);
 
-	// Cache window and view because it will be used in many places and I don't want to make it global
-	// but making making a static window and view would be better.
-	TwinformWindow twinformWindow;
-	twinformWindow.window = &window;
-	twinformWindow.view = &view;
+  // Cache window and view because it will be used in many places and I don't want to make it global
+  // but making making a static window and view would be better.
+  TwinformWindow twinformWindow;
+  twinformWindow.window = &window;
+  twinformWindow.view = &view;
 
-	Simulator::SetWindow(&twinformWindow);
+  Simulator::SetWindow(&twinformWindow);
 
-	Camera camera(twinformWindow, windowWidth, windowHeight);
+  Camera camera(twinformWindow, windowWidth, windowHeight);
 
-	sf::Vector2f start(0.0f, 360.0f);
-	twinmath::SnapToGrid(start, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
-	Creator::MakeStaticGeometry(start, sf::Vector2f((REAL)GRID_WIDTH_HALF, (REAL)GRID_HEIGHT_HALF));
+  sf::Vector2f start(0.0f, 360.0f);
+  twinmath::SnapToGrid(start, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
+  Creator::MakeStaticGeometry(start, sf::Vector2f((REAL)GRID_WIDTH_HALF, (REAL)GRID_HEIGHT_HALF));
 
-	REAL accumulator = 0.0f;
-	REAL t = 0.0f;
+  REAL accumulator = 0.0f;
+  REAL t = 0.0f;
 
-	// TODO: Finish implementing well behaved physics steps with 
-	// fix your timestep article. This could cause temporal aliasing but 
-	// I'm not sure why :(
+  // TODO: Finish implementing well behaved physics steps with 
+  // fix your timestep article. This could cause temporal aliasing but 
+  // I'm not sure why :(
 
-	// Building macro is just for map building. So undefine it before making a distributable build
+  // Building macro is just for map building. So undefine it before making a distributable build
 #ifdef BUILDING
-	Builder::Initialize(camera);
+  Builder::Initialize(camera);
 #endif
 
-	std::vector<ControllableCharacter*> characters;
-	while (window.isOpen())
-	{
-		REAL time = Renderer::GetLastFrametime();
-		accumulator += time;
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
+  std::vector<ControllableCharacter*> characters;
+  while (window.isOpen())
+  {
+    REAL time = Renderer::GetLastFrametime();
+    accumulator += time;
+    sf::Event event;
+    while (window.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+        window.close();
+    }
 
 #ifdef BUILDING
-		Builder::Update(MAX_DT);
+    Builder::Update(MAX_DT);
 #endif
 
-		while (accumulator >= MAX_DT)
-		{
-			Simulator::Simulate(MAX_DT);
-			ParticleSystem::Update(MAX_DT);
-			// Execute one command per iteration
-			CommandStream::Execute(COMMAND_CONSUMPTION);
-			accumulator -= MAX_DT;
-			t += MAX_DT;
-		}
+    while (accumulator >= MAX_DT)
+    {
+      Simulator::Simulate(MAX_DT);
+      ParticleSystem::Update(MAX_DT);
+      // Execute one command per iteration
+      CommandStream::Execute(COMMAND_CONSUMPTION);
+      accumulator -= MAX_DT;
+      t += MAX_DT;
+    }
 
-		// For some reason the camera moves to player here, seems like a terrible spot for this code
-		if (Creator::GetPlayer())
-		{
-			camera.MoveTo(Creator::GetPlayer()->GetParticle().GetPosition());
-		}
+    // For some reason the camera moves to player here, seems like a terrible spot for this code
+    if (Creator::GetPlayer())
+    {
+      camera.MoveTo(Creator::GetPlayer()->GetParticle().GetPosition());
+    }
 
-		Renderer::Render(window);
-	}
+    Renderer::Render(window);
+  }
 
-	Terminal::Kill();
+  Terminal::Kill();
 
-	return 0;
+  return 0;
 }

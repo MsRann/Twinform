@@ -6,41 +6,41 @@
 class Command
 {
 public:
-	virtual bool Execute() const = 0;
+  virtual bool Execute() const = 0;
 };
 
 class SaveCommand : public Command
 {
 public:
-	SaveCommand(const std::string& filename);
+  SaveCommand(const std::string& filename);
 
-	bool Execute() const;
+  bool Execute() const;
 private:
-	std::string mFilename;
+  std::string mFilename;
 };
 
 class LoadCommand : public Command
 {
 public:
-	LoadCommand(const std::string& filename);
+  LoadCommand(const std::string& filename);
 
-	bool Execute() const;
+  bool Execute() const;
 private:
-	std::string mFilename;
+  std::string mFilename;
 };
 
 class ClearCommand : public Command
 {
 public:
-	bool Execute() const;
+  bool Execute() const;
 };
 
 class PickupCommand : public Command
 {
 public:
-	PickupCommand(uint32_t itemid);
+  PickupCommand(uint32_t itemid);
 
-	bool Execute() const;
+  bool Execute() const;
 private:
-	uint32_t mItemId;
+  uint32_t mItemId;
 };

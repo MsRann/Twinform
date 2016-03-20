@@ -4,22 +4,22 @@
 #include "Simulator.h"
 
 Simulatable::Simulatable() :
-	mParticle(sf::Vector2f(0.0f, 0.0f))
-	, mCollisionBounds(sf::FloatRect(0.0f, 0.0f, 25.0f, 25.0f))
-	, mGravity(sf::Vector2f(0.0f, 0.0f))
-	, mPast(1000) // Will store the last ten second worth of particles
-	, mID(0)
-	, mFlags(0)
+  mParticle(sf::Vector2f(0.0f, 0.0f))
+  , mCollisionBounds(sf::FloatRect(0.0f, 0.0f, 25.0f, 25.0f))
+  , mGravity(sf::Vector2f(0.0f, 0.0f))
+  , mPast(1000) // Will store the last ten second worth of particles
+  , mID(0)
+  , mFlags(0)
 {
 }
 
 Simulatable::Simulatable(sf::Vector2f start, sf::Vector2f size) :
-	mParticle(start)
-	, mCollisionBounds(start.x, start.y, size.x, size.y)
-	, mGravity(sf::Vector2f(0.0f, 0.0f))
-	, mPast(1000) // Will store the last ten second worth of particles
-	, mID(0)
-	, mFlags(0)
+  mParticle(start)
+  , mCollisionBounds(start.x, start.y, size.x, size.y)
+  , mGravity(sf::Vector2f(0.0f, 0.0f))
+  , mPast(1000) // Will store the last ten second worth of particles
+  , mID(0)
+  , mFlags(0)
 {
 }
 
@@ -29,99 +29,99 @@ Simulatable::~Simulatable()
 
 void Simulatable::PostUpdate(REAL delta)
 {
-	mPast.Add(mParticle);
-	if (mFlags & HAS_GRAVITY)
-		mParticle.AddAcceleration(mGravity);
-	mParticle.Integrate(delta);
+  mPast.Add(mParticle);
+  if (mFlags & HAS_GRAVITY)
+    mParticle.AddAcceleration(mGravity);
+  mParticle.Integrate(delta);
 }
 
 void Simulatable::UpdateCollisionBounds()
 {
-	sf::Vector2f pos = mParticle.GetPosition();
-	mCollisionBounds.left = pos.x;
-	mCollisionBounds.top = pos.y;
+  sf::Vector2f pos = mParticle.GetPosition();
+  mCollisionBounds.left = pos.x;
+  mCollisionBounds.top = pos.y;
 }
 
 void Simulatable::SetGravity(const sf::Vector2f& gravity)
 {
-	mFlags |= HAS_GRAVITY;
-	mGravity = gravity;
+  mFlags |= HAS_GRAVITY;
+  mGravity = gravity;
 }
 
 void Simulatable::SetPrevKey(const sf::Vector2i& key)
 {
-	mPrevKey = key;
+  mPrevKey = key;
 }
 
 const sf::FloatRect& Simulatable::GetCollisionBounds() const
 {
-	return mCollisionBounds;
+  return mCollisionBounds;
 }
 
 sf::FloatRect Simulatable::EstimateCollisionBounds(const sf::Vector2f& position) const
 {
-	sf::FloatRect bounds = mCollisionBounds;
-	bounds.top = position.y;
-	bounds.left = position.x;
-	return bounds;
+  sf::FloatRect bounds = mCollisionBounds;
+  bounds.top = position.y;
+  bounds.left = position.x;
+  return bounds;
 }
 
 sf::Vector2i Simulatable::GetPrevKey() const
 {
-	return mPrevKey;
+  return mPrevKey;
 }
 
 void Simulatable::SetParticle(const Particle& particle)
 {
-	mParticle = particle;
+  mParticle = particle;
 }
 
 const sf::Vector2f& Simulatable::GetGravity() const
 {
-	return mGravity;
+  return mGravity;
 }
 
 void Simulatable::SetFlag(PhysicalFlags flag)
 {
-	mFlags |= flag;
+  mFlags |= flag;
 }
 
 void Simulatable::UnsetFlag(PhysicalFlags flag)
 {
-	mFlags &= ~flag;
+  mFlags &= ~flag;
 }
 
 Particle& Simulatable::GetParticle()
 {
-	return mParticle;
+  return mParticle;
 }
 
 Particle Simulatable::GetParticleCopy()
 {
-	return mParticle;
+  return mParticle;
 }
 
 const Particle& Simulatable::GetParticleConst() const
 {
-	return mParticle;
+  return mParticle;
 }
 
 unsigned int Simulatable::GetFlags() const
 {
-	return mFlags;
+  return mFlags;
 }
 
 REAL Simulatable::GetMass() const
 {
-	return mParticle.GetMass();
-}	
+  return mParticle.GetMass();
+}  
 
 RingBuffer<Particle>& Simulatable::GetPast()
 {
-	return mPast;
+  return mPast;
 }
 
 uint32_t Simulatable::GetID()
 {
-	return mID;
+  return mID;
 }

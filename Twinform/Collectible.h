@@ -5,16 +5,16 @@
 class Collectible : public Simulatable
 {
 public:
-	Collectible();
-	Collectible(sf::Vector2f start, sf::Vector2f size, uint32_t id);
-	~Collectible();
+  Collectible();
+  Collectible(sf::Vector2f start, sf::Vector2f size, uint32_t id);
+  ~Collectible();
 
-	virtual void PreUpdate(REAL delta);
-	virtual void PostUpdate(REAL delta);
+  virtual void PreUpdate(REAL delta);
+  virtual void PostUpdate(REAL delta);
 
-	sf::RectangleShape& GetDrawable();
+  sf::RectangleShape& GetDrawable();
 
 private:
-	sf::RectangleShape mDrawable;
+  sf::RectangleShape mDrawable;
 };
 

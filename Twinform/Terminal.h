@@ -2,5 +2,5 @@
 
 namespace Terminal
 {
-	void Kill();
+  void Kill();
 }

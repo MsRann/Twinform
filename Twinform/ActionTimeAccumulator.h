@@ -5,19 +5,19 @@
 class ActionTimeAccumulator
 {
 public:
-	ActionTimeAccumulator();
-	ActionTimeAccumulator(REAL limit);
+  ActionTimeAccumulator();
+  ActionTimeAccumulator(REAL limit);
 
-	void Add(REAL delta);
-	void Subtract(REAL delta);
-	void SetLimit(REAL limit);
+  void Add(REAL delta);
+  void Subtract(REAL delta);
+  void SetLimit(REAL limit);
 
-	void Reset();
-	bool IsReady();
+  void Reset();
+  bool IsReady();
 
-	REAL GetAccumulation();
+  REAL GetAccumulation();
 
 private:
-	REAL mAccumulation;
-	REAL mLimit;
+  REAL mAccumulation;
+  REAL mLimit;
 };

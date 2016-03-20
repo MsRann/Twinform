@@ -2,15 +2,15 @@
 
 namespace
 {
-	uint32_t sCollectibleCount = 0;
+  uint32_t sCollectibleCount = 0;
 }
 
 void Inventory::AddCollectible()
 {
-	++sCollectibleCount;
+  ++sCollectibleCount;
 }
 
 uint32_t Inventory::GetCollectibleCount()
 {
-	return sCollectibleCount;
+  return sCollectibleCount;
 }

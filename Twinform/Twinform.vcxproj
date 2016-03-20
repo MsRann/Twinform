@@ -140,6 +140,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PlayerControls.cpp" />
     <ClCompile Include="PropertyReader.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Simulatable.cpp" />
     <ClCompile Include="ControllableCharacter.cpp" />
     <ClCompile Include="main.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PropertyReader.h" />
     <ClInclude Include="RingBuffer.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Simulatable.h" />
     <ClInclude Include="ControllableCharacter.h" />
     <ClInclude Include="Renderer.h" />

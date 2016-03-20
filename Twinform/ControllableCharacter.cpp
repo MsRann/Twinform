@@ -4,25 +4,17 @@
 #include "PropertyReader.h"
 #include "ParticleSystem.h"
 #include "TwinMath.h"
+#include "Settings.h"
 
 #include <SFML\Window\Keyboard.hpp>
 
 #include <iostream> // TODO: Remove me
 
-namespace
-{
-  static PropertyReader sCharacterSettings("Settings/character_settings.txt");
-
-  static bool sSettingsLoaded = false;
-
-  static REAL sRadius;
-}
 
 ControllableCharacter::ControllableCharacter() :
   Simulatable()
   , mControls(CONTROLS_WASD)
 {
-  LoadSettings();
   mControls.Initialize(this);
 }
 
@@ -34,11 +26,10 @@ ControllableCharacter::ControllableCharacter(sf::Vector2f start
   , mControls(controls)
   , mRewind(0)
 {
-  LoadSettings();
   // TODO: Move id somewhere else
   mID = id;
   mDrawable.setPosition(start);
-  mDrawable.setRadius(sRadius);
+  mDrawable.setRadius(Settings::GetCharacterSettings().mRadius);
   mControls.Initialize(this);
 }
 
@@ -61,13 +52,4 @@ void ControllableCharacter::PreUpdate(REAL delta)
 sf::CircleShape& ControllableCharacter::GetDrawable()
 {
   return mDrawable;
-}
-
-void ControllableCharacter::LoadSettings()
-{
-  if (sSettingsLoaded)
-    return;
-  sCharacterSettings.ReadFloat("Radius", sRadius);
-
-  sSettingsLoaded = true;
 }

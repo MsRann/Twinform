@@ -13,6 +13,7 @@
 #include "ParticleSystem.h"
 #include "Terminal.h"
 #include "CommandStream.h"
+#include "Settings.h"
 
 #ifdef BUILDING
 #include "Builder.h"
@@ -20,26 +21,28 @@
 
 int main()
 {
-  PropertyReader windowSettings("Settings/window_settings.txt");
+  // Read all settings from file
+  Settings::Load();
 
-  int windowWidth;
-  int windowHeight;
-  std::string windowTitle;
-  int windowStyle;
-
-  windowSettings.ReadInt("WindowWidth", windowWidth);
-  windowSettings.ReadInt("WindowHeight", windowHeight);
-  windowSettings.ReadString("WindowTitle", windowTitle);
-  windowSettings.ReadInt("WindowStyle", windowStyle);
-
-  ParticleSystem::Create(sf::Vector2f(0.0f, 0.0f));
-
+  const Settings::WindowSettings& windowSettings = Settings::GetWindowSettings();
+  
   sf::ContextSettings settings;
   settings.antialiasingLevel = 2;
-  sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), windowTitle, windowStyle, settings);
-  sf::View view;
+  
+  sf::RenderWindow window(
+    sf::VideoMode(
+      windowSettings.mWindowWidth
+      , windowSettings.mWindowHeight)
+    , windowSettings.mWindowTitle
+    , windowSettings.mWindowStyle
+    , settings);
 
-  view.reset(sf::FloatRect(0, 0, (float)windowWidth, (float)windowHeight));
+  sf::View view;
+  view.reset(sf::FloatRect(0
+    , 0
+    , static_cast<float>(windowSettings.mWindowWidth)
+    , static_cast<float>(windowSettings.mWindowHeight)));
+
   view.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
 
   window.setView(view);
@@ -52,7 +55,9 @@ int main()
 
   Simulator::SetWindow(&twinformWindow);
 
-  Camera camera(twinformWindow, windowWidth, windowHeight);
+  Camera camera(twinformWindow
+    , windowSettings.mWindowWidth
+    , windowSettings.mWindowHeight);
 
   sf::Vector2f start(0.0f, 360.0f);
   twinmath::SnapToGrid(start, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);

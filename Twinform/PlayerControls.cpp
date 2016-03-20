@@ -1,44 +1,11 @@
 #include "PlayerControls.h"
 
 #include "PropertyReader.h"
+#include "Settings.h"
 
 namespace
 {
-  static PropertyReader sCharacterSettings("Settings/character_settings.txt");
-
-  static bool sSettingsLoaded = false;
-  static REAL sRightForceX;
-  static REAL sRightForceY;
-
-  static REAL sLeftForceX;
-  static REAL sLeftForceY;
-
-  static REAL sJumpForceX;
-  static REAL sJumpForceY;
-
-  static REAL sDownForceX;
-  static REAL sDownForceY;
-
-  static REAL sRadius;
-
-  static void LoadSettings();
-
-  void LoadSettings()
-  {
-    if (sSettingsLoaded)
-      return;
-
-    sCharacterSettings.ReadFloat("RightForceX", sRightForceX);
-    sCharacterSettings.ReadFloat("RightForceY", sRightForceY);
-    sCharacterSettings.ReadFloat("LeftForceX", sLeftForceX);
-    sCharacterSettings.ReadFloat("LeftForceY", sLeftForceY);
-    sCharacterSettings.ReadFloat("JumpForceX", sJumpForceX);
-    sCharacterSettings.ReadFloat("JumpForceY", sJumpForceY);
-    sCharacterSettings.ReadFloat("DownForceX", sDownForceX);
-    sCharacterSettings.ReadFloat("DownForceY", sDownForceY);
-    sCharacterSettings.ReadFloat("Radius", sRadius);
-    sSettingsLoaded = true;
-  }
+  static Settings::CharacterSettings sCharacterSettings;
 }
 
 PlayerControls::PlayerControls(ControllableControls controls) :
@@ -49,7 +16,7 @@ PlayerControls::PlayerControls(ControllableControls controls) :
   , mDownActionAccumulator(0.50f)
   , mSpaceActionAccumulator(MAX_DT)
 {
-  LoadSettings();
+  sCharacterSettings = Settings::GetCharacterSettings();
 }
 
 
@@ -67,9 +34,6 @@ void PlayerControls::ExecuteActionDown()
 {
   if (!mDownActionAccumulator.IsReady())
     return;
-
-  //mSimulatable->GetParticle().AddForce(sf::Vector2f(sDownForceX, sDownForceY));
-  //mDownActionAccumulator.Reset();
 }
 
 void PlayerControls::ExecuteActionUp()
@@ -77,11 +41,13 @@ void PlayerControls::ExecuteActionUp()
   if (!mUpActionAccumulator.IsReady())
     return;
 
-  float jumpForce = sJumpForceY;
+  float jumpForce = sCharacterSettings.mJumpForceY;
   if (mSimulatable->mGravity.y < 0.0f)
     jumpForce *= -1;
 
-  mSimulatable->GetParticle().AddForce(sf::Vector2f(sJumpForceX, jumpForce));
+  mSimulatable->GetParticle().AddForce(
+    sf::Vector2f(sCharacterSettings.mJumpForceX
+      , jumpForce));
   mUpActionAccumulator.Reset();
 }
 
@@ -90,7 +56,10 @@ void PlayerControls::ExecuteActionRight()
   if (!mRightActionAccumulator.IsReady())
     return;
 
-  mSimulatable->GetParticle().AddVelocity(sRightForceX, sRightForceY);
+  mSimulatable->GetParticle().AddVelocity(
+    sCharacterSettings.mRightForceX
+    , sCharacterSettings.mRightForceY);
+
   mRightActionAccumulator.Reset();
 }
 
@@ -99,7 +68,10 @@ void PlayerControls::ExecuteActionLeft()
   if (!mLeftActionAccumulator.IsReady())
     return;
 
-  mSimulatable->GetParticle().AddVelocity(sLeftForceX, sLeftForceY);
+  mSimulatable->GetParticle().AddVelocity(
+    sCharacterSettings.mLeftForceX
+    , sCharacterSettings.mLeftForceY);
+
   mLeftActionAccumulator.Reset();
 }
 

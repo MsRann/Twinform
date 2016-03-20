@@ -6,8 +6,8 @@
 class Neutron : public Simulatable
 {
 public:
-  Neutron();
-  ~Neutron();
+  Neutron(Brain* brain);
+  virtual ~Neutron() override;
 
   virtual void PrepareUpdate(REAL delta) override;
   virtual void PreUpdate(REAL delta) override;

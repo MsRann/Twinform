@@ -12,7 +12,7 @@ class Simulatable
 public:
   Simulatable();
   Simulatable(sf::Vector2f start, sf::Vector2f size);
-  ~Simulatable();
+  virtual ~Simulatable();
 
   // This will ALWAYS run before updates, so only put things that, don't need to be ever paused, in here
   virtual void PrepareUpdate(REAL delta) {};

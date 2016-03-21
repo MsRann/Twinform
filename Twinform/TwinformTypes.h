@@ -30,6 +30,8 @@ enum TwinformObject
 {
   STATIC, 
   NEUTRON,
+  ELECTRON,
+  PROTON,
   COLLECTIBLE,
   UNDETERMINABLE
 };

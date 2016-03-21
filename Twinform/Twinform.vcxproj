@@ -133,6 +133,7 @@
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="CommandStream.cpp" />
     <ClCompile Include="Creator.cpp" />
+    <ClCompile Include="Electron.cpp" />
     <ClCompile Include="HashedCellStorage.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Neutron.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PlayerControls.cpp" />
     <ClCompile Include="PropertyReader.cpp" />
+    <ClCompile Include="Proton.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Simulatable.cpp" />
     <ClCompile Include="main.cpp" />
@@ -160,6 +162,7 @@
     <ClInclude Include="CommandStream.h" />
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Electron.h" />
     <ClInclude Include="HashedCellStorage.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Neutron.h" />
@@ -167,6 +170,7 @@
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PlayerControls.h" />
     <ClInclude Include="PropertyReader.h" />
+    <ClInclude Include="Proton.h" />
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Simulatable.h" />

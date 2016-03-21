@@ -1,3 +1,11 @@
+/*
+* This file is a true hunk of crap.
+* I need a way of storing all game objects by type and this is the poor module that suffers for it.
+* In here ther will be lots of code duplication.
+* To make matters worse this is where I save and load to/from file.
+* TODO: Fix it.
+*/
+
 #include "Creator.h"
 #include "Simulator.h"
 #include "Renderer.h"
@@ -25,14 +33,21 @@ namespace
   // This storage can be used to look up characters by ID, maybe useful, maybe not.
   // Overhead is only a 32-bit uint as the key id
   std::unordered_map<uint32_t, Neutron*> sNeutrons;
+  std::unordered_map<uint32_t, Proton*> sProtons;
+  std::unordered_map<uint32_t, Electron*> sElectrons;
   std::unordered_map<uint32_t, StaticGeometry*> sStaticGeometry;
   std::unordered_map<uint32_t, Collectible*> sCollectibles;
-  Neutron* sPlayer = nullptr;
+  Neutron* sPlayerNeutron = nullptr;
+  Electron* sPlayerElectron = nullptr;
+  Proton* sPlayerProton = nullptr;
   // This will just act as an auto increment integer
   uint32_t mUniqueId = 1;
 
   void DeleteStaticGeometry(const uint32_t& id);
   void DeleteNeutron(const uint32_t& id);
+  void DeleteProton(const uint32_t& id);
+  void DeleteElectron(const uint32_t& id);
+  void DeleteCollectible(const uint32_t& id);
 
   void DeleteStaticGeometry(const uint32_t& id)
   {
@@ -55,11 +70,43 @@ namespace
     Renderer::Remove(id);
     Simulator::DeleteDynamic(*neutron);
     sNeutrons.erase(id);
+    if (neutron == sPlayerNeutron)
+    {
+      sPlayerNeutron = nullptr;
+    }
     delete neutron;
+  }
 
-#ifdef BUILDING
-    Builder::SetCharacterSpawned(false);
-#endif
+  void DeleteProton(const uint32_t& id)
+  {
+    if (sProtons.find(id) == sProtons.end())
+      return;
+
+    Proton* proton = sProtons[id];
+    Renderer::Remove(id);
+    Simulator::DeleteDynamic(*proton);
+    sNeutrons.erase(id);
+    if (proton == sPlayerProton)
+    {
+      sPlayerProton = nullptr;
+    }
+    delete proton;
+  }
+
+  void DeleteElectron(const uint32_t& id)
+  {
+    if (sElectrons.find(id) == sElectrons.end())
+      return;
+
+    Electron* electron = sElectrons[id];
+    Renderer::Remove(id);
+    Simulator::DeleteDynamic(*electron);
+    sNeutrons.erase(id);
+    if (electron == sPlayerElectron)
+    {
+      sPlayerNeutron = nullptr;
+    }
+    delete electron;
   }
 
   void DeleteCollectible(const uint32_t& id)
@@ -75,7 +122,9 @@ namespace
   }
 }
 
-StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2f& position, const sf::Vector2f& size)
+StaticGeometry* Creator::MakeStaticGeometry(
+  const sf::Vector2f& position
+  , const sf::Vector2f& size)
 {
   if (mUniqueId == 0)
   {
@@ -89,7 +138,9 @@ StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2f& position, const 
   return sStaticGeometry[mUniqueId - 1];
 }
 
-StaticGeometry* Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position, const sf::Vector2f& size)
+StaticGeometry* Creator::MakeStaticGeometryFromSize(
+  const sf::Vector2i& position
+  , const sf::Vector2f& size)
 {
   if (mUniqueId == 0)
   {
@@ -106,7 +157,9 @@ StaticGeometry* Creator::MakeStaticGeometryFromSize(const sf::Vector2i& position
   return sStaticGeometry[mUniqueId - 1];
 }
 
-StaticGeometry* Creator::MakeStaticGeometry(const sf::Vector2i& position, const sf::Vector2f& size)
+StaticGeometry* Creator::MakeStaticGeometry(
+  const sf::Vector2i& position
+  , const sf::Vector2f& size)
 {
   sf::Vector2f positionf((float)position.x, (float)position.y);
   return MakeStaticGeometry(positionf, size);
@@ -132,13 +185,76 @@ Neutron* Creator::MakeNeutron(
   sNeutrons[mUniqueId]->SetGravity(gravity);
   Renderer::Add(mUniqueId, sNeutrons[mUniqueId]->GetDrawable());
   Simulator::Add(*sNeutrons[mUniqueId]);
-  sPlayer = sNeutrons[mUniqueId];
+  if (!sPlayerNeutron)
+  {
+    sPlayerNeutron = sNeutrons[mUniqueId];
+  }
   ++mUniqueId;
 
   return sNeutrons[mUniqueId - 1];
 }
 
-Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vector2f& size)
+Electron* Creator::MakeElectron(
+  Brain* brain
+  , const sf::Vector2f& start
+  , const sf::Vector2f& size
+  , const sf::Vector2f& gravity)
+{
+  if (mUniqueId == 0)
+  {
+    return nullptr;
+  }
+
+  sElectrons[mUniqueId] = new Electron(
+    brain
+    , start
+    , size
+    , mUniqueId);
+
+  sElectrons[mUniqueId]->SetGravity(gravity);
+  Renderer::Add(mUniqueId, sElectrons[mUniqueId]->GetDrawable());
+  Simulator::Add(*sElectrons[mUniqueId]);
+  if (!sPlayerElectron)
+  {
+    sPlayerElectron = sElectrons[mUniqueId];
+  }
+  ++mUniqueId;
+
+  return sElectrons[mUniqueId - 1];
+}
+
+Proton* Creator::MakeProton(
+  Brain* brain
+  , const sf::Vector2f& start
+  , const sf::Vector2f& size
+  , const sf::Vector2f& gravity)
+{
+  if (mUniqueId == 0)
+  {
+    return nullptr;
+  }
+
+  sProtons[mUniqueId] = new Proton(
+    brain
+    , start
+    , size
+    , mUniqueId);
+
+  sProtons[mUniqueId]->SetGravity(gravity);
+  Renderer::Add(mUniqueId, sProtons[mUniqueId]->GetDrawable());
+  Simulator::Add(*sProtons[mUniqueId]);
+  if (!sPlayerProton)
+  {
+    sPlayerProton = sProtons[mUniqueId];
+  }
+  ++mUniqueId;
+
+  return sProtons[mUniqueId - 1];
+}
+
+Collectible* Creator::MakeCollectible(
+  const sf::Vector2f& start
+  , const sf::Vector2f& size)
 {
   if (mUniqueId == 0)
   {
@@ -152,9 +268,19 @@ Collectible* Creator::MakeCollectible(const sf::Vector2f& start, const sf::Vecto
   return sCollectibles[mUniqueId - 1];
 }
 
-Neutron* Creator::GetPlayer()
+Neutron* Creator::GetPlayerNeutron()
 {
-  return sPlayer;
+  return sPlayerNeutron;
+}
+
+Proton* Creator::GetPlayerProton()
+{
+  return sPlayerProton;
+}
+
+Electron* Creator::GetPlayerElectron()
+{
+  return sPlayerElectron;
 }
 
 void Creator::Save(const std::string& filename)
@@ -218,6 +344,16 @@ void Creator::Delete(const uint32_t& id)
         DeleteNeutron(id);
       }
       break;
+    case ELECTRON:
+      {
+        DeleteElectron(id);
+      }
+      break;
+    case PROTON:
+      {
+        DeleteProton(id);
+      }
+      break;
     case STATIC:
       {
         DeleteStaticGeometry(id);
@@ -240,6 +376,7 @@ void Creator::Delete(const uint32_t& id)
 
 void Creator::Clear()
 {
+  // Clear all the maps of their stuff
   std::unordered_map<uint32_t, StaticGeometry*>::iterator itr = sStaticGeometry.begin();
   while (itr != sStaticGeometry.end())
   {
@@ -258,6 +395,33 @@ void Creator::Clear()
     Creator::Delete(id);
   }
 
+  std::unordered_map<uint32_t, Collectible*>::iterator itr3 = sCollectibles.begin();
+  while (itr3 != sCollectibles.end())
+  {
+    uint32_t id = itr2->second->GetID();
+    std::unordered_map<uint32_t, Collectible*>::iterator toerase = itr3;
+    ++itr3;
+    Creator::Delete(id);
+  }
+
+  std::unordered_map<uint32_t, Proton*>::iterator itr4 = sProtons.begin();
+  while (itr4 != sProtons.end())
+  {
+    uint32_t id = itr4->second->GetID();
+    std::unordered_map<uint32_t, Proton*>::iterator toerase = itr4;
+    ++itr4;
+    Creator::Delete(id);
+  }
+
+  std::unordered_map<uint32_t, Electron*>::iterator itr5 = sElectrons.begin();
+  while (itr5 != sElectrons.end())
+  {
+    uint32_t id = itr5->second->GetID();
+    std::unordered_map<uint32_t, Electron*>::iterator toerase = itr5;
+    ++itr2;
+    Creator::Delete(id);
+  }
+
   mUniqueId = 1;
 }
 
@@ -272,6 +436,12 @@ TwinformObject Creator::GetType(const uint32_t& id)
 
   if (sNeutrons.find(id) != sNeutrons.end())
     return NEUTRON;
+
+  if (sProtons.find(id) != sProtons.end())
+    return PROTON;
+
+  if (sElectrons.find(id) != sElectrons.end())
+    return ELECTRON;
 
   if (sStaticGeometry.find(id) != sStaticGeometry.end())
     return STATIC;

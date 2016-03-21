@@ -1,29 +1,29 @@
 #pragma once
+
 #include "Simulatable.h"
 
-#include "PlayerControls.h"
 #include "Brain.h"
 
-class Neutron : public Simulatable
+class Electron :
+  public Simulatable
 {
 public:
-  Neutron(
+  Electron(
     Brain* brain
     , sf::Vector2f start
     , sf::Vector2f size
     , uint32_t id);
-  virtual ~Neutron() override;
+  virtual ~Electron() override;
 
-  virtual void PrepareUpdate(REAL delta) override;
+  // Inherited via Simulatable
   virtual void PreUpdate(REAL delta) override;
 
   sf::CircleShape& GetDrawable();
 
 private:
-  void ExecuteControls();
-  ActionTimeAccumulator mSplitActionAccumulator;
-
   sf::CircleShape mDrawable;
+
+  REAL mCharge;
   Brain* mBrain;
 };
 

@@ -60,7 +60,10 @@ int main()
 
   sf::Vector2f start(0.0f, 360.0f);
   twinmath::SnapToGrid(start, GRID_WIDTH_HALF, GRID_HEIGHT_HALF);
-  Creator::MakeStaticGeometry(start, sf::Vector2f((REAL)GRID_WIDTH_HALF, (REAL)GRID_HEIGHT_HALF));
+  Creator::MakeStaticGeometry(
+    start
+    , sf::Vector2f(static_cast<REAL>(GRID_WIDTH_HALF)
+      , static_cast<REAL>(GRID_HEIGHT_HALF)));
 
   REAL accumulator = 0.0f;
   REAL t = 0.0f;
@@ -93,21 +96,29 @@ int main()
     {
       Simulator::Simulate(MAX_DT);
       ParticleSystem::Update(MAX_DT);
-      // Execute one command per iteration
+      // Execute COMMAND_CONSUMPTION number of commands per iteration
       CommandStream::Execute(COMMAND_CONSUMPTION);
       accumulator -= MAX_DT;
       t += MAX_DT;
     }
 
     // For some reason the camera moves to player here, seems like a terrible spot for this code
-    if (Creator::GetPlayer())
+    if (Creator::GetPlayerNeutron())
     {
-      camera.MoveTo(Creator::GetPlayer()->GetParticle().GetPosition());
+      camera.MoveTo(Creator::GetPlayerNeutron()->GetParticle().GetPosition());
+    }
+
+    if (Creator::GetPlayerElectron() && Creator::GetPlayerProton())
+    {
+      camera.MoveTo(
+        (Creator::GetPlayerElectron()->GetParticle().GetPosition() + 
+        Creator::GetPlayerProton()->GetParticle().GetPosition()) / 2.0f);
     }
 
     Renderer::Render(window);
   }
 
+  Creator::Clear();
   Terminal::Kill();
 
   return 0;

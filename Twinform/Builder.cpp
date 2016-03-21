@@ -19,6 +19,7 @@ namespace
   Camera* sCamera = nullptr;
   bool sCharactersSpawned = false;
   ActionTimeAccumulator sDeleteAccumulator(1.0f);
+  ActionTimeAccumulator sSpawnAccumulator(100.0f);
 
   void ProcessMouseInputs();
   void ProcessKeyboardInputs();
@@ -63,7 +64,8 @@ namespace
     sf::Vector2f offset;
 
     // Process screen offset based on WASD
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+
+    /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
       offset += sf::Vector2f(0.05f, 0.0f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -73,7 +75,7 @@ namespace
       offset += sf::Vector2f(0.0f, -0.05f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-      offset += sf::Vector2f(0.0f, 0.05f);
+      offset += sf::Vector2f(0.0f, 0.05f);*/
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
     {
@@ -100,9 +102,9 @@ namespace
       }
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && sSpawnAccumulator.IsReady())
     {
-      if (!Creator::GetPlayer())
+      if (!Creator::GetPlayerNeutron())
       {
         Creator::MakeNeutron(
           new PlayerControls(CONTROLS_WASD)
@@ -112,8 +114,9 @@ namespace
       }
       else
       {
-        Creator::GetPlayer()->GetParticle().SetPosition(sf::Vector2f(0, 300));
+        Creator::GetPlayerNeutron()->GetParticle().SetPosition(sf::Vector2f(0, 300));
       }
+      sSpawnAccumulator.Reset();
     }
 
     sCamera->Translate(offset);
@@ -133,6 +136,7 @@ void Builder::Initialize(Camera& twinformWindow)
 
 void Builder::Update(REAL delta)
 {
+  sSpawnAccumulator.Add(delta);
   sDeleteAccumulator.Add(delta);
   ProcessMouseInputs();
   ProcessKeyboardInputs();

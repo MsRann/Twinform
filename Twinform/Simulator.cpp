@@ -21,9 +21,21 @@ namespace
   TwinformWindow* sWindow = nullptr;
 
   // Private functions
-  void HandleStaticCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions);
-  void HandleDynamicCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions);
-  void FixCharacterParticle(Simulatable* character, const sf::FloatRect& collision, const sf::Vector2f& hitVelocity, const sf::Vector2f& hitPosition, const sf::Vector2f& hitAcceleration);
+  void HandleStaticCollisions(
+    Simulatable* character
+    , std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions);
+
+  void HandleDynamicCollisions(
+    Simulatable* character
+    , std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions);
+
+  void FixCharacterParticle(
+    Simulatable* character
+    , const sf::FloatRect& collision
+    , const sf::Vector2f& hitVelocity
+    , const sf::Vector2f& hitPosition
+    , const sf::Vector2f& hitAcceleration);
+
   bool SkipUpdate(Simulatable* character);
 
   void ProcessCollisions(Simulatable* character)
@@ -37,7 +49,9 @@ namespace
       HandleDynamicCollisions(character, dynamicCollisions);
   }
 
-  void HandleStaticCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions)
+  void HandleStaticCollisions(
+    Simulatable* character
+    , std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions)
   {
     for (auto collision : staticCollisions)
     {
@@ -48,7 +62,8 @@ namespace
       {
         Particle pastParticle;
         // Go back in time and find a position in which the simulatable wasn't colliding
-        if (past.Get(rewind++, pastParticle) && !character->EstimateCollisionBounds(pastParticle.GetPosition()).intersects(collision.second))
+        if (past.Get(rewind++, pastParticle) && 
+          !character->EstimateCollisionBounds(pastParticle.GetPosition()).intersects(collision.second))
         {
           sf::Vector2f hitVelocity = character->GetParticle().GetVelocity();
           sf::Vector2f hitPosition = character->GetParticle().GetPosition();
@@ -62,7 +77,9 @@ namespace
     }
   }
 
-  void HandleDynamicCollisions(Simulatable* character, std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions)
+  void HandleDynamicCollisions(
+    Simulatable* character
+    , std::vector<std::pair<Simulatable*, sf::FloatRect>>& dynamicCollisions)
   {
     //HandleStaticCollisions(character, dynamicCollisions);
     for (auto collision : dynamicCollisions)
@@ -83,7 +100,12 @@ namespace
   //    - Rewind time to a position and velocity/acceleration where the character was not colliding
   // 3. Fix the character particle
   //    - This means reapplying the x or y attributes AT COLLISION
-  void FixCharacterParticle(Simulatable* character, const sf::FloatRect& collision, const sf::Vector2f& hitVelocity, const sf::Vector2f& hitPosition, const sf::Vector2f& hitAcceleration)
+  void FixCharacterParticle(
+    Simulatable* character
+    , const sf::FloatRect& collision
+    , const sf::Vector2f& hitVelocity
+    , const sf::Vector2f& hitPosition
+    , const sf::Vector2f& hitAcceleration)
   {
     // The point of this function will be to soften velocity on the x and y axis until an integration step
     // will no longer cause collision. After that is done move the character once witih this fixed velocity.

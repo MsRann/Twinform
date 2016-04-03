@@ -54,5 +54,6 @@ void Neutron::ExecuteControls()
     if (!mSplitActionAccumulator.IsReady()) return;
     // Command will split the neutron and delete it
     CommandStream::Add(new SplitNeutronCommand(this));
+    mSplitActionAccumulator.Reset();
   }
 }

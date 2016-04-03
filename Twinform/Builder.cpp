@@ -106,11 +106,13 @@ namespace
     {
       if (!Creator::GetPlayerNeutron())
       {
-        Creator::MakeNeutron(
+        Neutron* neutron = Creator::MakeNeutron(
           new PlayerControls(CONTROLS_WASD)
           , sf::Vector2f(0, 300)
           , sf::Vector2f(25.0f, 25.0f)
           , sf::Vector2f(0.0f, 10.0f));
+
+        Creator::SetPlayerNeutron(neutron);
       }
       else
       {

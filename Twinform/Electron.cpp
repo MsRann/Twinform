@@ -18,6 +18,9 @@ Electron::Electron(
   mDrawable.setPosition(start);
   mDrawable.setRadius(Settings::GetCharacterSettings().mRadius);
   mBrain->Initialize(this);
+  mDrawable.setFillColor(sf::Color::Red);
+  mDrawable.setOutlineThickness(1.0f);
+  mDrawable.setOutlineColor(sf::Color::Black);
 }
 
 Electron::~Electron()

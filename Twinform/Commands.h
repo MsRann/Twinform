@@ -9,6 +9,7 @@ class Command
 {
 public:
   virtual bool Execute() const = 0;
+
 };
 
 class SaveCommand : public Command

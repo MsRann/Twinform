@@ -48,6 +48,7 @@ void PlayerControls::ExecuteActionUp()
   mSimulatable->GetParticle().AddForce(
     sf::Vector2f(sCharacterSettings.mJumpForceX
       , jumpForce));
+
   mUpActionAccumulator.Reset();
 }
 
@@ -95,6 +96,7 @@ void PlayerControls::ApplyInputs()
       ExecuteActionLeft();
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && 
+      // Check if player can jump
       abs(mSimulatable->GetParticle().GetAcceleration().y) < abs(mSimulatable->mGravity.y) + FLOAT_SMALL)
       ExecuteActionUp();
 

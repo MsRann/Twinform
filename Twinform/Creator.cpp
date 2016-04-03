@@ -70,10 +70,6 @@ namespace
     Renderer::Remove(id);
     Simulator::DeleteDynamic(*neutron);
     sNeutrons.erase(id);
-    if (neutron == sPlayerNeutron)
-    {
-      sPlayerNeutron = nullptr;
-    }
     delete neutron;
   }
 
@@ -86,10 +82,6 @@ namespace
     Renderer::Remove(id);
     Simulator::DeleteDynamic(*proton);
     sNeutrons.erase(id);
-    if (proton == sPlayerProton)
-    {
-      sPlayerProton = nullptr;
-    }
     delete proton;
   }
 
@@ -102,10 +94,6 @@ namespace
     Renderer::Remove(id);
     Simulator::DeleteDynamic(*electron);
     sNeutrons.erase(id);
-    if (electron == sPlayerElectron)
-    {
-      sPlayerNeutron = nullptr;
-    }
     delete electron;
   }
 
@@ -283,6 +271,21 @@ Electron* Creator::GetPlayerElectron()
   return sPlayerElectron;
 }
 
+void Creator::SetPlayerNeutron(Neutron* neutron)
+{
+  sPlayerNeutron = neutron;
+}
+
+void Creator::SetPlayerProton(Proton* proton)
+{
+  sPlayerProton = proton;
+}
+
+void Creator::SetPlayerElectron(Electron* electron)
+{
+  sPlayerElectron = electron;
+}
+
 void Creator::Save(const std::string& filename)
 {
   rapidjson::Document doc;
@@ -429,7 +432,7 @@ TwinformObject Creator::GetType(const uint32_t& id)
 {
   // Is this dumb?
 
-  // TODO:
+  // Yeah,
   //  This is stupid.
 
   // This needs to be some base class, 'Creatable' perhaps

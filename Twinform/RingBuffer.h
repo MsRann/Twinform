@@ -92,6 +92,10 @@ bool RingBuffer<T>::Get(unsigned int rewind, T& item) const
   if (rewindIndx < 0)
     rewindIndx = mBufferSize + rewindIndx;
 
+  // TODO: TEMP CODE
+  if (rewindIndx < 0)
+    rewindIndx = 0;
+
   if (!mUsedCache[rewindIndx])
     return false;
 

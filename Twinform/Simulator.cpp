@@ -20,6 +20,8 @@ namespace
   HashedCellStorage sStaticStorage;
   TwinformWindow* sWindow = nullptr;
 
+  void Collide(Simulatable* character, const sf::FloatRect& boundary);
+
   // Private functions
   void HandleStaticCollisions(
     Simulatable* character
@@ -49,31 +51,36 @@ namespace
       HandleDynamicCollisions(character, dynamicCollisions);
   }
 
+  void Collide(Simulatable* character, const sf::FloatRect& boundary)
+  {
+    Particle& characterParticle = character->GetParticle();
+    RingBuffer<Particle>& past = character->GetPast();
+    unsigned int rewind = 1;
+    while (character->GetCollisionBounds().intersects(boundary) && rewind < OBJECT_HISTORY_LENGTH)
+    {
+      Particle pastParticle;
+      // Go back in time and find a position in which the simulatable wasn't colliding
+      if (past.Get(rewind++, pastParticle) &&
+        !character->EstimateCollisionBounds(pastParticle.GetPosition()).intersects(boundary))
+      {
+        sf::Vector2f hitVelocity = character->GetParticle().GetVelocity();
+        sf::Vector2f hitPosition = character->GetParticle().GetPosition();
+        sf::Vector2f hitAcceleration = character->GetParticle().GetAcceleration();
+        character->SetParticle(pastParticle);
+        character->UpdateCollisionBounds();
+        characterParticle.SetAcceleration(0.0f, 0.0f);
+        FixCharacterParticle(character, boundary, hitVelocity, hitPosition, hitAcceleration);
+      }
+    }
+  }
+
   void HandleStaticCollisions(
     Simulatable* character
     , std::vector<std::pair<Simulatable*, sf::FloatRect>>& staticCollisions)
   {
     for (auto collision : staticCollisions)
     {
-      Particle& characterParticle = character->GetParticle();
-      RingBuffer<Particle>& past = character->GetPast();
-      unsigned int rewind = 1;
-      while (character->GetCollisionBounds().intersects(collision.second))
-      {
-        Particle pastParticle;
-        // Go back in time and find a position in which the simulatable wasn't colliding
-        if (past.Get(rewind++, pastParticle) && 
-          !character->EstimateCollisionBounds(pastParticle.GetPosition()).intersects(collision.second))
-        {
-          sf::Vector2f hitVelocity = character->GetParticle().GetVelocity();
-          sf::Vector2f hitPosition = character->GetParticle().GetPosition();
-          sf::Vector2f hitAcceleration = character->GetParticle().GetAcceleration();
-          character->SetParticle(pastParticle);
-          character->UpdateCollisionBounds();
-          characterParticle.SetAcceleration(0.0f, 0.0f);
-          FixCharacterParticle(character, collision.second, hitVelocity, hitPosition, hitAcceleration);
-        }
-      }
+      Collide(character, collision.second);
     }
   }
 
@@ -89,6 +96,10 @@ namespace
         // Delete it like this because list is being iterated over
         CommandStream::Add(new PickupCommand(collision.first->GetID()));
         return;
+      }
+      else
+      {
+        Collide(character, collision.second);
       }
     }
   }

@@ -17,6 +17,9 @@ Proton::Proton(
   mID = id;
   mDrawable.setPosition(start);
   mDrawable.setRadius(Settings::GetCharacterSettings().mRadius);
+  mDrawable.setFillColor(sf::Color::Blue);
+  mDrawable.setOutlineThickness(1.0f);
+  mDrawable.setOutlineColor(sf::Color::Black);
   mBrain->Initialize(this);
 }
 

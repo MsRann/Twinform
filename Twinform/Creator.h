@@ -48,6 +48,10 @@ namespace Creator
   Proton* GetPlayerProton();
   Electron* GetPlayerElectron();
 
+  void SetPlayerNeutron(Neutron* neutron);
+  void SetPlayerProton(Proton* proton);
+  void SetPlayerElectron(Electron* electron);
+
   void Save(const std::string& filename);
   void Load(const std::string& filename);
 

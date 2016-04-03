@@ -53,15 +53,19 @@ SplitNeutronCommand::SplitNeutronCommand(Simulatable* sim) :
 
 bool SplitNeutronCommand::Execute() const
 {
+  // If this neutron is the player neutron set it's
+  // split to player controls
+  bool setPlayer = mSimulatable == Creator::GetPlayerNeutron();
+
   // Create the proton and electron
   Proton* proton = Creator::MakeProton(
-    new PlayerControls(CONTROLS_WASD)
+    new PlayerControls(CONTROLS_WASD) // TODO: Brain if not player
     , mSimulatable->GetParticle().GetPosition()
     , sf::Vector2f(25.0f, 25.0f)
     , sf::Vector2f(0.0f, 10.0f));
 
   Electron* electron = Creator::MakeElectron(
-    new PlayerControls(CONTROLS_ARROWS)
+    new PlayerControls(CONTROLS_ARROWS) // TODO: Brain if not player
     , mSimulatable->GetParticle().GetPosition()
     , sf::Vector2f(25.0f, 25.0f)
     , sf::Vector2f(0.0f, 10.0f));
@@ -76,5 +80,12 @@ bool SplitNeutronCommand::Execute() const
   // Delete the neutron
   Creator::Delete(mSimulatable->GetID());
 
-  return false;
+  // Set controllable proton and electron
+  if (setPlayer)
+  {
+    Creator::SetPlayerProton(proton);
+    Creator::SetPlayerElectron(electron);
+  }
+
+  return true;
 }
